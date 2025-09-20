@@ -1,0 +1,357 @@
+/* Custom CSS for Color Mixer */
+
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --info-color: #17a2b8;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+}
+
+/* General Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 0;
+}
+
+.hero-section .btn {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.hero-section .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Color Preview Components */
+.color-preview-large {
+  width: 100%;
+  height: 300px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  animation: colorShift 3s ease-in-out infinite;
+}
+
+@keyframes colorShift {
+  0%,
+  100% {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  }
+  50% {
+    background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+  }
+}
+
+.color-preview {
+  width: 100%;
+  height: 120px;
+  border-radius: 10px;
+  border: 3px solid #dee2e6;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.color-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mixed-color-preview {
+  width: 100%;
+  height: 200px;
+  border-radius: 15px;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+/* Color Input Components */
+.color-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-control-color {
+  width: 100%;
+  height: 60px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-control-color:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Mix Controls */
+.mix-controls {
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin: 15px 0;
+}
+
+.form-range {
+  height: 8px;
+  background: linear-gradient(to right, #ff6b6b, #4ecdc4);
+  border-radius: 5px;
+}
+
+.form-range::-webkit-slider-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #007bff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.form-range::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #007bff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+/* Cards and Components */
+.card {
+  border: none;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-title {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Color Information Display */
+.color-info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.color-info h6 {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.color-info p {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+/* Feature Cards */
+.feature-card {
+  text-align: center;
+  padding: 30px 20px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  background: #f8f9fa;
+  transform: translateY(-5px);
+}
+
+.feature-card i {
+  margin-bottom: 15px;
+}
+
+.feature-card h5 {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #1e7e34);
+  border: none;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:hover {
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.btn-outline-primary {
+  border: 2px solid #007bff;
+  color: #007bff;
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background: #007bff;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Navigation */
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+}
+
+footer a {
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  transform: scale(1.2);
+  color: #007bff !important;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 60px 0;
+  }
+
+  .color-preview-large {
+    height: 200px;
+    margin-top: 30px;
+  }
+
+  .display-4 {
+    font-size: 2.5rem;
+  }
+
+  .display-5 {
+    font-size: 2rem;
+  }
+
+  .mixed-color-preview {
+    height: 150px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .color-preview {
+    height: 80px;
+  }
+
+  .feature-card {
+    padding: 20px 15px;
+  }
+
+  .feature-card i {
+    font-size: 2rem !important;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+.btn:focus,
+.form-control:focus,
+.form-range:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .navbar,
+  .btn,
+  .hero-section {
+    display: none !important;
+  }
+
+  .color-preview,
+  .mixed-color-preview {
+    border: 2px solid #000 !important;
+  }
+}
