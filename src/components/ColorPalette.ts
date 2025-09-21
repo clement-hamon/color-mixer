@@ -11,9 +11,18 @@ export class ColorPalette {
     console.log('Setting up available colors palette');
     this.elements.availableColorsContainer.innerHTML = '';
 
-    const primaryColors = ['#ff0000', '#00ff00', '#0000ff'];
+    const enhancedColors = [
+      '#ff0000', // Red
+      '#00ff00', // Green
+      '#0000ff', // Blue
+      '#ffffff', // White
+      '#000000', // Black
+      '#ffff00', // Yellow (Red + Green)
+      '#ff00ff', // Magenta (Red + Blue)
+      '#00ffff' // Cyan (Green + Blue)
+    ];
 
-    primaryColors.forEach((color) => {
+    enhancedColors.forEach((color) => {
       const colorDiv = document.createElement('div');
       colorDiv.className = 'col-md-2 mb-3';
       colorDiv.innerHTML = `

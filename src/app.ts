@@ -12,6 +12,7 @@ declare global {
     clearMixingCanvas(): void;
     submitColor(): void;
     showHint(): void;
+    showSolution(): void;
     skipLevel(): void;
     resetGame(): void;
     handleColorDragStart(event: DragEvent, color: string): void;
@@ -27,10 +28,13 @@ window.mixColors = () => window.colorMixerGame.mixColors();
 window.clearMixingCanvas = () => window.colorMixerGame.clearMixingCanvas();
 window.submitColor = () => window.colorMixerGame.submitColor();
 window.showHint = () => window.colorMixerGame.showHint();
+window.showSolution = () => window.colorMixerGame.showSolution();
 window.skipLevel = () => window.colorMixerGame.skipLevel();
 window.resetGame = () => window.colorMixerGame.resetGame();
-window.handleColorDragStart = (event: DragEvent, color: string) => window.colorMixerGame.handleColorDragStart(event, color);
-window.handleSlotDrop = (event: DragEvent, slotIndex: number) => window.colorMixerGame.handleSlotDrop(event, slotIndex);
+window.handleColorDragStart = (event: DragEvent, color: string) =>
+  window.colorMixerGame.handleColorDragStart(event, color);
+window.handleSlotDrop = (event: DragEvent, slotIndex: number) =>
+  window.colorMixerGame.handleSlotDrop(event, slotIndex);
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {

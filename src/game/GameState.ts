@@ -80,36 +80,38 @@ export class GameStateManager {
 
   getActiveColors(): string[] {
     return this.state.mixingSlots
-      .filter(slot => !slot.isEmpty && slot.color !== null)
-      .map(slot => slot.color!);
+      .filter((slot) => !slot.isEmpty && slot.color !== null)
+      .map((slot) => slot.color!);
   }
 
   private mixColors(color1: string, color2: string): string {
     // Convert hex to RGB
     const rgb1 = this.hexToRgb(color1);
     const rgb2 = this.hexToRgb(color2);
-    
+
     if (!rgb1 || !rgb2) return color1;
-    
+
     // Mix the colors by averaging RGB values
     const mixedR = Math.round((rgb1.r + rgb2.r) / 2);
     const mixedG = Math.round((rgb1.g + rgb2.g) / 2);
     const mixedB = Math.round((rgb1.b + rgb2.b) / 2);
-    
+
     return this.rgbToHex(mixedR, mixedG, mixedB);
   }
 
   private hexToRgb(hex: string): { r: number; g: number; b: number } | null {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        }
+      : null;
   }
 
   private rgbToHex(r: number, g: number, b: number): string {
-    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
   }
 
   resetGame(): void {

@@ -436,7 +436,7 @@ footer a:hover {
   background: rgba(0, 123, 255, 0.1);
 }
 
-.available-color[draggable="true"] {
+.available-color[draggable='true'] {
   user-select: none;
 }
 

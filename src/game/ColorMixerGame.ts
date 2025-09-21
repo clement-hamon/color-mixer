@@ -9,6 +9,7 @@ import { GameStats } from '../components/GameStats.js';
 import { ColorPalette } from '../components/ColorPalette.js';
 import { MixingCanvas } from '../components/MixingCanvas.js';
 import { ColorComparison } from '../components/ColorComparison.js';
+import { ColorMixingSolver, type MixingStep } from '../utils/ColorMixingSolver.js';
 
 export class ColorMixerGame {
   private gameConfig!: GameConfig;
@@ -22,6 +23,7 @@ export class ColorMixerGame {
   private colorPalette: ColorPalette;
   private mixingCanvas: MixingCanvas;
   private colorComparison: ColorComparison;
+  private colorSolver: ColorMixingSolver;
 
   constructor() {
     this.elements = DOMUtils.initializeElements();
@@ -29,6 +31,7 @@ export class ColorMixerGame {
     this.colorPalette = new ColorPalette(this.elements);
     this.mixingCanvas = new MixingCanvas(this.elements);
     this.colorComparison = new ColorComparison(this.elements);
+    this.colorSolver = new ColorMixingSolver();
 
     this.bindEventListeners();
     this.loadGameConfig();
@@ -170,13 +173,13 @@ export class ColorMixerGame {
    */
   handleColorDragStart(event: DragEvent, color: string): void {
     if (!event.dataTransfer) return;
-    
+
     const dragData: DragDropData = {
       sourceType: 'palette',
       sourceId: color,
       color: color
     };
-    
+
     event.dataTransfer.setData('application/json', JSON.stringify(dragData));
     event.dataTransfer.effectAllowed = 'copy';
   }
@@ -186,13 +189,13 @@ export class ColorMixerGame {
    */
   handleSlotDrop(event: DragEvent, slotIndex: number): void {
     event.preventDefault();
-    
+
     if (!event.dataTransfer) return;
-    
+
     try {
       const dragData: DragDropData = JSON.parse(event.dataTransfer.getData('application/json'));
       this.addColorToSlot(dragData.color, slotIndex);
-      
+
       NotificationUtils.showNotification(
         `${dragData.color} added to slot ${slotIndex + 1}`,
         'success'
@@ -362,6 +365,92 @@ export class ColorMixerGame {
       const hint = level.hints[Math.floor(Math.random() * level.hints.length)];
       NotificationUtils.showNotification(`Hint: ${hint}`, 'info');
     }
+  }
+
+  /**
+   * Show algorithmic solution for current level
+   */
+  showSolution(): void {
+    const level = this.gameState.getCurrentLevel();
+    if (!level) {
+      NotificationUtils.showNotification('No level loaded to solve!', 'warning');
+      return;
+    }
+
+    // Clear current mixing slots first
+    this.clearMixingCanvas();
+
+    // Solve the current level
+    const result = this.colorSolver.solve(level.targetColor, {
+      tolerance: level.tolerance,
+      availableColors: [
+        '#ff0000', // Red
+        '#00ff00', // Green
+        '#0000ff', // Blue
+        '#ffffff', // White
+        '#000000', // Black
+        '#ffff00', // Yellow (Red + Green)
+        '#ff00ff', // Magenta (Red + Blue)
+        '#00ffff' // Cyan (Green + Blue)
+      ],
+      maxSlots: this.gameConfig.gameSettings.mixingSlots
+    });
+
+    if (result.success) {
+      NotificationUtils.showNotification(
+        `✅ Solution found! Accuracy: ${result.accuracy.toFixed(1)}%`,
+        'success'
+      );
+
+      // Apply the solution step by step with animation
+      this.applySolutionSteps(result.steps);
+
+      // Show detailed explanation
+      setTimeout(() => {
+        NotificationUtils.showNotification(`💡 ${result.explanation}`, 'info');
+      }, 2000);
+    } else {
+      NotificationUtils.showNotification(
+        `⚠️ No exact solution found. Best attempt: ${result.accuracy.toFixed(1)}% accuracy`,
+        'warning'
+      );
+
+      // Apply the best attempt
+      this.applySolutionSteps(result.steps);
+
+      setTimeout(() => {
+        NotificationUtils.showNotification(`💡 ${result.explanation}`, 'info');
+      }, 2000);
+    }
+  }
+
+  /**
+   * Apply solution steps with animation
+   */
+  private applySolutionSteps(steps: MixingStep[]): void {
+    let stepIndex = 0;
+
+    const applyNextStep = () => {
+      if (stepIndex >= steps.length) return;
+
+      const step = steps[stepIndex];
+      if (step.action === 'add' && step.color) {
+        this.addColorToSlot(step.color, step.slotIndex);
+
+        // Show step description
+        NotificationUtils.showNotification(`Step ${stepIndex + 1}: ${step.description}`, 'info');
+      }
+
+      stepIndex++;
+
+      // Continue with next step after a delay
+      if (stepIndex < steps.length) {
+        setTimeout(applyNextStep, 1000);
+      }
+    };
+
+    // Start applying steps
+    setTimeout(applyNextStep, 500);
   }
 
   /**
