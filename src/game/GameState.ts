@@ -1,7 +1,9 @@
 import { GameState, GameConfig, MixingSlot } from '../types/Game.js';
+import { ColorMixingAlgorithms, MixingAlgorithm } from '../utils/ColorMixingAlgorithms.js';
 
 export class GameStateManager {
   private state: GameState;
+  private mixingAlgorithm: MixingAlgorithm = MixingAlgorithm.SUBTRACTIVE_CMY;
 
   constructor(private gameConfig: GameConfig) {
     this.state = this.createInitialState();
@@ -36,6 +38,27 @@ export class GameStateManager {
   generateNewTarget(): void {
     const newTargetColor = this.generateRandomColor();
     this.state.targetColor = newTargetColor;
+  }
+
+  /**
+   * Set the mixing algorithm to use
+   */
+  setMixingAlgorithm(algorithm: MixingAlgorithm): void {
+    this.mixingAlgorithm = algorithm;
+  }
+
+  /**
+   * Get the current mixing algorithm
+   */
+  getMixingAlgorithm(): MixingAlgorithm {
+    return this.mixingAlgorithm;
+  }
+
+  /**
+   * Get available mixing algorithms with descriptions
+   */
+  getAvailableAlgorithms(): Record<MixingAlgorithm, { name: string; description: string }> {
+    return ColorMixingAlgorithms.getAlgorithmDescriptions();
   }
 
   getState(): GameState {
@@ -114,18 +137,8 @@ export class GameStateManager {
   }
 
   private mixColors(color1: string, color2: string): string {
-    // Convert hex to RGB
-    const rgb1 = this.hexToRgb(color1);
-    const rgb2 = this.hexToRgb(color2);
-
-    if (!rgb1 || !rgb2) return color1;
-
-    // Mix the colors by averaging RGB values
-    const mixedR = Math.round((rgb1.r + rgb2.r) / 2);
-    const mixedG = Math.round((rgb1.g + rgb2.g) / 2);
-    const mixedB = Math.round((rgb1.b + rgb2.b) / 2);
-
-    return this.rgbToHex(mixedR, mixedG, mixedB);
+    const result = ColorMixingAlgorithms.mixColors(color1, color2, this.mixingAlgorithm);
+    return result.color;
   }
 
   private hexToRgb(hex: string): { r: number; g: number; b: number } | null {

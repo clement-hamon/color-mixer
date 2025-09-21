@@ -95,7 +95,7 @@
                   <div class="progress mb-3" style="height: 20px">
                     <div class="progress-bar" id="matchProgress" role="progressbar" style="width: 0%">0%</div>
                   </div>
-                  <button class="btn btn-success" id="submitBtn" onclick="submitColor()" disabled>
+                  <button class="btn btn-success" id="submitBtn" onclick="submitColor()">
                     <i class="bi bi-check-circle me-2"></i>
                     Submit Color
                   </button>
@@ -126,6 +126,39 @@
                     <i class="bi bi-trash me-2"></i>
                     Clear Canvas
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mixing Algorithm Selector -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card algorithm-selector">
+              <div class="card-body">
+                <h5 class="card-title mb-3">
+                  <i class="bi bi-gear me-2"></i>
+                  Mixing Algorithm
+                </h5>
+                <div class="row align-items-center">
+                  <div class="col-md-6">
+                    <label for="algorithmSelect" class="form-label">Choose mixing algorithm:</label>
+                    <select class="form-select" id="algorithmSelect" onchange="changeMixingAlgorithm()">
+                      <option value="subtractive_cmy" selected>Subtractive CMY - Paint-like mixing</option>
+                      <option value="additive_rgb">Additive RGB - Simple averaging</option>
+                      <option value="lab_perceptual">LAB Perceptual - Human vision matching</option>
+                      <option value="hsv_vibrant">HSV Vibrant - Maintains color vibrancy</option>
+                      <option value="weighted_alpha">Weighted Alpha - Variable mixing ratios</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="alert alert-info mb-0" id="algorithmDescription">
+                      <small>
+                        <strong>Subtractive CMY:</strong> Realistic pigment behavior - most like real paint mixing
+                      </small>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

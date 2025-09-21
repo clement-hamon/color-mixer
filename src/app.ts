@@ -15,6 +15,7 @@ declare global {
     showSolution(): void;
     skipLevel(): void;
     resetGame(): void;
+    changeMixingAlgorithm(): void;
     handleColorDragStart(event: DragEvent, color: string): void;
     handleSlotDrop(event: DragEvent, slotIndex: number): void;
   }
@@ -31,6 +32,7 @@ window.showHint = () => window.colorMixerGame.showHint();
 window.showSolution = () => window.colorMixerGame.showSolution();
 window.skipLevel = () => window.colorMixerGame.skipRound();
 window.resetGame = () => window.colorMixerGame.resetGame();
+window.changeMixingAlgorithm = () => window.colorMixerGame.changeMixingAlgorithm();
 window.handleColorDragStart = (event: DragEvent, color: string) =>
   window.colorMixerGame.handleColorDragStart(event, color);
 window.handleSlotDrop = (event: DragEvent, slotIndex: number) =>

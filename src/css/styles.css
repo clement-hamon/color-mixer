@@ -512,3 +512,35 @@ footer a:hover {
 .btn:hover:not(:disabled) {
   transform: translateY(-1px);
 }
+
+/* Algorithm Selector Styles */
+.algorithm-selector .card {
+  border: 1px solid #e3e6f0;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.algorithm-selector .form-select {
+  border: 2px solid #e3e6f0;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.algorithm-selector .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.algorithm-selector .alert-info {
+  background-color: #f8f9ff;
+  border-color: #b8c1ec;
+  color: #4c63d2;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.algorithm-selector .card-title {
+  color: #5a5c69;
+  font-weight: 600;
+}
