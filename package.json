@@ -11,7 +11,7 @@
     "dev": "bun run --watch src/server.js",
     "dev:ts": "bun run build:ts && bun run --watch src/server.js",
     "dev:watch": "bun build src/app.ts --outdir dist --watch & bun run --watch src/server.js",
-    "build": "bun run lint && bun run format:check && bun run test && bun run bundle",
+    "build": "bun run lint && bun run format:check && bun run test && bun run build:ts",
     "build:ts": "bun run scripts/build-ts.js",
     "bundle": "bun build src/app.ts --outdir dist --minify --splitting --target browser --sourcemap",
     "build:prod": "NODE_ENV=production bun run build && bun run optimize",
