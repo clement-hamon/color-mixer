@@ -24,24 +24,9 @@
       "@components/*": ["./src/js/components/*"],
       "@utils/*": ["./src/js/utils/*"]
     },
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "bun-types"
-    ]
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["bun-types"]
   },
-  "include": [
-    "src/**/*",
-    "tests/**/*",
-    "scripts/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "coverage",
-    ".bun-cache"
-  ]
+  "include": ["src/**/*", "tests/**/*", "scripts/**/*"],
+  "exclude": ["node_modules", "dist", "coverage", ".bun-cache"]
 }

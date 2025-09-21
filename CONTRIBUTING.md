@@ -11,12 +11,14 @@ Thank you for your interest in contributing to Color Mixer! This document provid
 ## Development Setup
 
 1. **Fork and clone the repository**
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/color-mixer.git
    cd color-mixer
    ```
 
 2. **Install dependencies**
+
    ```bash
    bun install
    ```
@@ -31,6 +33,7 @@ Thank you for your interest in contributing to Color Mixer! This document provid
 This project maintains high code quality through automated tools:
 
 ### ESLint Configuration
+
 - ES6+ JavaScript features
 - Single quotes for strings
 - Semicolons required
@@ -39,19 +42,23 @@ This project maintains high code quality through automated tools:
 - Consistent spacing and formatting
 
 ### Prettier Configuration
+
 - 100 character line width
 - Single quotes
 - No trailing commas
 - 2-space indentation
 
 ### Pre-commit Hooks
+
 Husky runs automatic checks before each commit:
+
 - ESLint linting
 - Prettier formatting check
 
 ## Making Changes
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -62,6 +69,7 @@ Husky runs automatic checks before each commit:
    - Add comments for complex logic
 
 3. **Test your changes**
+
    ```bash
    bun run lint        # Check for linting errors
    bun run format      # Format your code
@@ -88,6 +96,7 @@ Use conventional commit format:
 - `chore:` Maintenance tasks
 
 Examples:
+
 - `feat: add color harmony suggestions`
 - `fix: resolve color mixing calculation bug`
 - `docs: update README with new features`
@@ -96,6 +105,7 @@ Examples:
 ## Pull Request Process
 
 1. **Ensure your branch is up to date**
+
    ```bash
    git checkout main
    git pull origin main
@@ -104,6 +114,7 @@ Examples:
    ```
 
 2. **Push your branch**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -122,18 +133,21 @@ Examples:
 ## Types of Contributions
 
 ### Bug Reports
+
 - Use the issue templates
 - Include steps to reproduce
 - Provide browser/environment information
 - Include screenshots if relevant
 
 ### Feature Requests
+
 - Describe the feature clearly
 - Explain the use case
 - Consider implementation complexity
 - Be open to alternative solutions
 
 ### Code Contributions
+
 - New features
 - Bug fixes
 - Performance improvements
@@ -141,6 +155,7 @@ Examples:
 - Documentation improvements
 
 ### Design Contributions
+
 - UI/UX improvements
 - Accessibility enhancements
 - Mobile responsiveness
@@ -164,6 +179,7 @@ color-mixer/
 ## Coding Guidelines
 
 ### JavaScript
+
 - Use ES6+ features (arrow functions, const/let, template literals)
 - Add JSDoc comments for functions
 - Handle errors gracefully
@@ -171,6 +187,7 @@ color-mixer/
 - Keep functions small and focused
 
 ### CSS
+
 - Use CSS custom properties for theming
 - Follow BEM methodology when possible
 - Ensure responsive design
@@ -178,6 +195,7 @@ color-mixer/
 - Use modern CSS features
 
 ### HTML
+
 - Use semantic HTML elements
 - Include proper accessibility attributes
 - Ensure valid HTML structure
@@ -186,11 +204,13 @@ color-mixer/
 ## Testing
 
 Currently, the project uses:
+
 - ESLint for code quality
 - Prettier for code formatting
 - Manual testing for functionality
 
 Future testing improvements:
+
 - Unit tests for JavaScript functions
 - Integration tests for user interactions
 - Accessibility testing
@@ -199,6 +219,7 @@ Future testing improvements:
 ## Documentation
 
 When contributing:
+
 - Update README.md if needed
 - Add JSDoc comments for new functions
 - Update this CONTRIBUTING.md if process changes
@@ -207,6 +228,7 @@ When contributing:
 ## Questions and Support
 
 If you have questions:
+
 1. Check existing issues and documentation
 2. Create a new issue with the "question" label
 3. Be specific about what you need help with
@@ -214,6 +236,7 @@ If you have questions:
 ## Recognition
 
 Contributors will be recognized in:
+
 - README.md contributors section
 - Release notes for significant contributions
 - GitHub contributor graphs

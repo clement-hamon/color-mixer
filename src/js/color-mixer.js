@@ -246,7 +246,7 @@ class ColorMixerGame {
    */
   updateMixedColor() {
     const activeColors = this.mixingSlots.filter((color) => color !== null);
-    
+
     if (activeColors.length === 0) {
       this.playerColor = '#000000';
     } else if (activeColors.length === 1) {

@@ -42,20 +42,20 @@ Visit `http://localhost:3000` to play the game!
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start development server with hot reload |
-| `bun run build` | Build for production |
-| `bun run build:prod` | Build with optimizations and compression |
-| `bun run test` | Run unit tests |
-| `bun run test:watch` | Run tests in watch mode |
-| `bun run test:coverage` | Run tests with coverage report |
-| `bun run lint` | Lint code with ESLint |
-| `bun run format` | Format code with Prettier |
-| `bun run type-check` | Type check with TypeScript |
-| `bun run analyze` | Analyze bundle size |
-| `bun run audit` | Security audit |
-| `bun run deploy` | Deploy to production |
+| Command                 | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `bun run dev`           | Start development server with hot reload |
+| `bun run build`         | Build for production                     |
+| `bun run build:prod`    | Build with optimizations and compression |
+| `bun run test`          | Run unit tests                           |
+| `bun run test:watch`    | Run tests in watch mode                  |
+| `bun run test:coverage` | Run tests with coverage report           |
+| `bun run lint`          | Lint code with ESLint                    |
+| `bun run format`        | Format code with Prettier                |
+| `bun run type-check`    | Type check with TypeScript               |
+| `bun run analyze`       | Analyze bundle size                      |
+| `bun run audit`         | Security audit                           |
+| `bun run deploy`        | Deploy to production                     |
 
 ### Development Workflow
 
@@ -116,6 +116,7 @@ bun run build:prod
 ```
 
 This will:
+
 - 🔍 Lint and format code
 - 🧪 Run all tests
 - 📦 Bundle and minify assets

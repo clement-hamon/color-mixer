@@ -9,8 +9,11 @@
   },
   "scripts": {
     "dev": "bun run --watch src/server.js",
+    "dev:ts": "bun run build:ts && bun run --watch src/server.js",
+    "dev:watch": "bun build src/app.ts --outdir dist --watch & bun run --watch src/server.js",
     "build": "bun run lint && bun run format:check && bun run test && bun run bundle",
-    "bundle": "bun build src/index.js --outdir dist --minify --splitting --target browser --sourcemap",
+    "build:ts": "bun run scripts/build-ts.js",
+    "bundle": "bun build src/app.ts --outdir dist --minify --splitting --target browser --sourcemap",
     "build:prod": "NODE_ENV=production bun run build && bun run optimize",
     "optimize": "bun run compress-assets && bun run generate-manifest",
     "compress-assets": "bun run scripts/compress.js",
@@ -60,14 +63,11 @@
     "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
     "playwright": "^1.40.0",
-    "prettier": "^3.0.0",
+    "prettier": "3.6.2",
     "typescript": "^5.0.0"
   },
   "lint-staged": {
-    "*.{html,css,js,ts}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+    "*.{html,css,js,ts}": ["prettier --write", "eslint --fix"]
   },
   "bun": {
     "preload": ["./src/preload.js"],

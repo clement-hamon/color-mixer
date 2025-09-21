@@ -11,7 +11,7 @@ A beautiful, interactive color mixing application built with Bootstrap 5 and van
 - **Interactive Interface**: Smooth animations and responsive design
 - **One-click Copy**: Copy color values to clipboard instantly
 - **Random Color Generator**: Generate random color combinations
-- **Keyboard Shortcuts**: 
+- **Keyboard Shortcuts**:
   - `Ctrl/Cmd + R`: Generate random colors
   - `Ctrl/Cmd + C`: Copy mixed color (when not in input field)
 - **Accessibility**: Full keyboard navigation and screen reader support
@@ -40,42 +40,47 @@ Visit the live application: [Color Mixer on GitHub Pages](https://clementhamon.g
 ### Local Development
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/clementhamon/color-mixer.git
    cd color-mixer
    ```
 
 2. **Install dependencies**
+
    ```bash
    bun install
    ```
 
 3. **Start development server**
+
    ```bash
    bun run dev
    ```
 
-3. **Start development server**
+4. **Start development server**
+
    ```bash
    npm run dev
    ```
+
    This will start a live server at `http://localhost:3000/src`
 
-4. **Build for production**
+5. **Build for production**
    ```bash
    bun run build
    ```
 
 ## 🔧 Available Scripts
 
-| Script | Description |
-|--------|-------------|
-| `bun run dev` | Start development server with live reload |
-| `bun run build` | Build project for production |
-| `bun run lint` | Run ESLint to check code quality |
-| `bun run lint:fix` | Fix ESLint issues automatically |
-| `bun run format` | Format code with Prettier |
-| `bun run format:check` | Check if code is properly formatted |
+| Script                 | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `bun run dev`          | Start development server with live reload |
+| `bun run build`        | Build project for production              |
+| `bun run lint`         | Run ESLint to check code quality          |
+| `bun run lint:fix`     | Fix ESLint issues automatically           |
+| `bun run format`       | Format code with Prettier                 |
+| `bun run format:check` | Check if code is properly formatted       |
 
 ## 🏗️ Project Structure
 

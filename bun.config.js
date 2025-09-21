@@ -8,6 +8,7 @@ export default {
     splitting: true,
     sourcemap: process.env.NODE_ENV !== 'production',
     outdir: 'dist',
+    entrypoints: ['./src/app.ts'],
     define: {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       'process.env.VERSION': JSON.stringify(process.env.npm_package_version || '2.0.0'),
@@ -16,6 +17,7 @@ export default {
     external: [],
     // Asset handling
     loader: {
+      '.ts': 'ts',
       '.png': 'file',
       '.jpg': 'file',
       '.jpeg': 'file',
@@ -28,7 +30,7 @@ export default {
       '.eot': 'file'
     }
   },
-  
+
   // Test configuration
   test: {
     preload: ['./src/test-setup.js'],
@@ -39,17 +41,11 @@ export default {
         branch: 70,
         statement: 80
       },
-      exclude: [
-        'node_modules/**',
-        'dist/**',
-        'scripts/**',
-        '**/*.test.js',
-        '**/*.spec.js'
-      ]
+      exclude: ['node_modules/**', 'dist/**', 'scripts/**', '**/*.test.js', '**/*.spec.js']
     },
     timeout: 5000
   },
-  
+
   // Development server configuration
   dev: {
     port: 3000,
@@ -60,7 +56,7 @@ export default {
       credentials: true
     }
   },
-  
+
   // Install configuration
   install: {
     cache: {
