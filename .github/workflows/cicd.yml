@@ -51,7 +51,7 @@ jobs:
         run: bun run test:coverage
 
       - name: 🏗️ Build project
-        run: bun run build
+        run: bun run build:prod
 
       - name: 📤 Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
