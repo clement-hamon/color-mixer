@@ -372,12 +372,16 @@ footer a:hover {
   border-radius: 10px;
   border: 3px solid #dee2e6;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  cursor: grab;
   transition: all 0.3s ease;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.available-color:active {
+  cursor: grabbing;
 }
 
 .available-color:hover {
@@ -416,7 +420,7 @@ footer a:hover {
   background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #e9ecef 10px, #e9ecef 20px);
 }
 
-.mixing-slot:not(.empty) {
+.mixing-slot.filled {
   border-style: solid;
   border-color: var(--success-color);
 }
@@ -424,6 +428,16 @@ footer a:hover {
 .mixing-slot:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Drag and drop states */
+.mixing-slot[ondragover] {
+  border-color: var(--primary-color);
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.available-color[draggable="true"] {
+  user-select: none;
 }
 
 .mixing-slot .slot-label {

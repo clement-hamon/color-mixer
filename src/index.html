@@ -67,24 +67,38 @@
           </div>
         </div>
 
-        <!-- Target Color -->
+        <!-- Target Color & Result Comparison -->
         <div class="row mb-4">
-          <div class="col-12">
-            <div class="card shadow">
+          <div class="col-lg-6 mb-3">
+            <div class="card shadow h-100">
               <div class="card-body text-center">
                 <h4 class="card-title mb-3">Target Color</h4>
-                <div class="row align-items-center">
-                  <div class="col-lg-6">
-                    <div class="target-color-preview" id="targetColorPreview"></div>
+                <div class="target-color-preview" id="targetColorPreview"></div>
+                <p class="mt-3 mb-1">
+                  <strong>Target:</strong>
+                  <span id="targetHex">#ff8000</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-3">
+            <div class="card shadow h-100">
+              <div class="card-body text-center">
+                <h4 class="card-title mb-3">Your Mixed Color</h4>
+                <div class="mixed-color-preview" id="playerColorPreview"></div>
+                <p class="mt-3 mb-1">
+                  <strong>Your Color:</strong>
+                  <span id="playerHex">#000000</span>
+                </p>
+                <div class="mt-3">
+                  <h6>Color Match</h6>
+                  <div class="progress mb-3" style="height: 20px">
+                    <div class="progress-bar" id="matchProgress" role="progressbar" style="width: 0%">0%</div>
                   </div>
-                  <div class="col-lg-6">
-                    <h5 id="levelName">Primary Colors</h5>
-                    <p class="mb-2" id="levelDescription">Mix primary colors to create secondary colors</p>
-                    <div class="alert alert-info" id="levelHint">
-                      <i class="bi bi-lightbulb me-2"></i>
-                      <span id="hintText">Try mixing red and yellow to get orange</span>
-                    </div>
-                  </div>
+                  <button class="btn btn-success" id="submitBtn" onclick="submitColor()" disabled>
+                    <i class="bi bi-check-circle me-2"></i>
+                    Submit Color
+                  </button>
                 </div>
               </div>
             </div>
@@ -96,21 +110,10 @@
           <div class="col-12">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title mb-3">Available Colors</h5>
+                <h5 class="card-title mb-3">Your palette</h5>
                 <div class="row" id="availableColorsContainer">
                   <!-- Available colors will be populated here -->
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Mixing Area -->
-        <div class="row mb-4">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Mixing Canvas</h5>
                 <div class="row" id="mixingCanvas">
                   <!-- Mixing slots will be populated here -->
                 </div>
@@ -123,42 +126,6 @@
                     <i class="bi bi-trash me-2"></i>
                     Clear Canvas
                   </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Result Area -->
-        <div class="row mb-4">
-          <div class="col-12">
-            <div class="card shadow">
-              <div class="card-body">
-                <h4 class="card-title mb-3">Your Mixed Color</h4>
-                <div class="row align-items-center">
-                  <div class="col-lg-6">
-                    <div class="mixed-color-preview" id="playerColorPreview"></div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="color-comparison">
-                      <h6>Color Match</h6>
-                      <div class="progress mb-3" style="height: 20px">
-                        <div class="progress-bar" id="matchProgress" role="progressbar" style="width: 0%">0%</div>
-                      </div>
-                      <p class="mb-1">
-                        <strong>Your Color:</strong>
-                        <span id="playerHex">#000000</span>
-                      </p>
-                      <p class="mb-3">
-                        <strong>Target Color:</strong>
-                        <span id="targetHex">#ff8000</span>
-                      </p>
-                      <button class="btn btn-success" id="submitBtn" onclick="submitColor()" disabled>
-                        <i class="bi bi-check-circle me-2"></i>
-                        Submit Color
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

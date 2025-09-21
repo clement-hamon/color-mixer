@@ -6,6 +6,7 @@ export interface GameConfig {
 export interface GameSettings {
   maxAttempts: number;
   timeLimit: number;
+  mixingSlots: number;
   scoreMultiplier: {
     perfect: number;
     close: number;
@@ -31,7 +32,19 @@ export interface GameState {
   timeLeft: number;
   isGameActive: boolean;
   playerColor: string;
-  mixingSlots: (string | null)[];
+  mixingSlots: MixingSlot[];
+}
+
+export interface MixingSlot {
+  id: number;
+  color: string | null;
+  isEmpty: boolean;
+}
+
+export interface DragDropData {
+  sourceType: 'palette' | 'slot';
+  sourceId: string | number;
+  color: string;
 }
 
 export interface ColorMatchResult {

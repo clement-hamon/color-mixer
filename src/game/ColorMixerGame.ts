@@ -1,4 +1,4 @@
-import { GameConfig, Level, ColorMatchResult } from '../types/Game.js';
+import { GameConfig, Level, ColorMatchResult, DragDropData, MixingSlot } from '../types/Game.js';
 import { GameElements } from '../types/DOM.js';
 import { ColorUtils } from '../utils/ColorUtils.js';
 import { DOMUtils } from '../utils/DOMUtils.js';
@@ -109,9 +109,9 @@ export class ColorMixerGame {
     if (this.elements.targetHex) this.elements.targetHex.textContent = level.targetColor;
 
     // Setup game components
-    this.colorPalette.setupAvailableColors(level.availableColors);
-    this.mixingCanvas.setupMixingCanvas(level.mixingSlots);
-    this.gameState.initializeMixingSlots(level.mixingSlots);
+    this.colorPalette.setupAvailableColors();
+    this.mixingCanvas.setupMixingCanvas(this.gameConfig.gameSettings.mixingSlots);
+    this.gameState.initializeMixingSlots(this.gameConfig.gameSettings.mixingSlots);
 
     // Reset player color
     this.gameState.updateState({ playerColor: '#000000' });
@@ -123,10 +123,10 @@ export class ColorMixerGame {
    */
   selectAvailableColor(color: string): void {
     const state = this.gameState.getState();
-    const emptySlot = state.mixingSlots.findIndex((slot) => slot === null);
+    const emptySlotIndex = state.mixingSlots.findIndex((slot) => slot.isEmpty);
 
-    if (emptySlot !== -1) {
-      this.addColorToSlot(color, emptySlot);
+    if (emptySlotIndex !== -1) {
+      this.addColorToSlot(color, emptySlotIndex);
     } else {
       NotificationUtils.showNotification(
         'All mixing slots are full! Clear a slot first.',
@@ -140,7 +140,8 @@ export class ColorMixerGame {
    */
   private addColorToSlot(color: string, slotIndex: number): void {
     this.gameState.addColorToSlot(color, slotIndex);
-    this.mixingCanvas.updateSlot(slotIndex, color);
+    const state = this.gameState.getState();
+    this.mixingCanvas.updateSlot(slotIndex, state.mixingSlots[slotIndex]);
     this.updateMixedColor();
   }
 
@@ -149,7 +150,8 @@ export class ColorMixerGame {
    */
   clearMixingSlot(slotIndex: number): void {
     this.gameState.clearSlot(slotIndex);
-    this.mixingCanvas.updateSlot(slotIndex, null);
+    const state = this.gameState.getState();
+    this.mixingCanvas.updateSlot(slotIndex, state.mixingSlots[slotIndex]);
     this.updateMixedColor();
   }
 
@@ -160,6 +162,44 @@ export class ColorMixerGame {
     const state = this.gameState.getState();
     for (let i = 0; i < state.mixingSlots.length; i++) {
       this.clearMixingSlot(i);
+    }
+  }
+
+  /**
+   * Handle drag start for color palette
+   */
+  handleColorDragStart(event: DragEvent, color: string): void {
+    if (!event.dataTransfer) return;
+    
+    const dragData: DragDropData = {
+      sourceType: 'palette',
+      sourceId: color,
+      color: color
+    };
+    
+    event.dataTransfer.setData('application/json', JSON.stringify(dragData));
+    event.dataTransfer.effectAllowed = 'copy';
+  }
+
+  /**
+   * Handle drop on mixing slot
+   */
+  handleSlotDrop(event: DragEvent, slotIndex: number): void {
+    event.preventDefault();
+    
+    if (!event.dataTransfer) return;
+    
+    try {
+      const dragData: DragDropData = JSON.parse(event.dataTransfer.getData('application/json'));
+      this.addColorToSlot(dragData.color, slotIndex);
+      
+      NotificationUtils.showNotification(
+        `${dragData.color} added to slot ${slotIndex + 1}`,
+        'success'
+      );
+    } catch (error) {
+      console.error('Error handling slot drop:', error);
+      NotificationUtils.showNotification('Error adding color to slot', 'error');
     }
   }
 
