@@ -1,3 +1,4 @@
+import './css/styles.css';
 import { ColorMixerGame } from './game/ColorMixerGame.js';
 
 // Global functions for HTML onclick handlers
