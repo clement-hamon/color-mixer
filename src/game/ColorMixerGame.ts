@@ -10,7 +10,7 @@ import { ColorPalette } from '../components/ColorPalette.js';
 import { MixingCanvas } from '../components/MixingCanvas.js';
 import { ColorComparison } from '../components/ColorComparison.js';
 import { ColorMixingSolver, type MixingStep } from '../utils/ColorMixingSolver.js';
-import { MixingAlgorithm } from '../utils/ColorMixingAlgorithms.js';
+import { MixingAlgorithm, ColorMixingAlgorithms } from '../utils/ColorMixingAlgorithms.js';
 
 export class ColorMixerGame {
   private gameConfig!: GameConfig;
@@ -224,12 +224,32 @@ export class ColorMixerGame {
     } else if (activeColors.length === 1) {
       playerColor = activeColors[0];
     } else {
-      playerColor = ColorUtils.blendMultipleColors(activeColors);
+      // Use the game state's configured algorithm for mixing multiple colors
+      playerColor = this.blendMultipleColorsWithAlgorithm(activeColors);
     }
 
     this.gameState.updateState({ playerColor });
     this.updatePlayerColor();
     this.checkColorMatch();
+  }
+
+  /**
+   * Blend multiple colors using the configured algorithm
+   */
+  private blendMultipleColorsWithAlgorithm(colors: string[]): string {
+    if (colors.length === 0) return '#000000';
+    if (colors.length === 1) return colors[0];
+
+    const algorithm = this.gameState.getMixingAlgorithm();
+
+    // For multiple colors, blend them sequentially using the chosen algorithm
+    let result = colors[0];
+    for (let i = 1; i < colors.length; i++) {
+      const mixResult = ColorMixingAlgorithms.mixColors(result, colors[i], algorithm);
+      result = mixResult.color;
+    }
+
+    return result;
   }
 
   /**
@@ -492,18 +512,18 @@ export class ColorMixerGame {
   changeMixingAlgorithm(): void {
     const algorithmSelect = document.getElementById('algorithmSelect') as HTMLSelectElement;
     const algorithmDescription = document.getElementById('algorithmDescription') as HTMLElement;
-    
+
     if (!algorithmSelect || !algorithmDescription) return;
 
     const selectedAlgorithm = algorithmSelect.value as MixingAlgorithm;
-    
+
     // Update the algorithm in the game state
     this.gameState.setMixingAlgorithm(selectedAlgorithm);
-    
+
     // Get algorithm descriptions
     const algorithms = this.gameState.getAvailableAlgorithms();
     const selectedAlgorithmInfo = algorithms[selectedAlgorithm];
-    
+
     // Update the description
     if (selectedAlgorithmInfo) {
       algorithmDescription.innerHTML = `
@@ -512,13 +532,19 @@ export class ColorMixerGame {
         </small>
       `;
     }
-    
+
     // Re-mix colors if there are colors in slots to show immediate effect
     if (this.gameState.getActiveColors().length > 0) {
       this.updateMixedColor();
-      NotificationUtils.showNotification(`Switched to ${selectedAlgorithmInfo?.name || 'selected'} algorithm`, 'info');
+      NotificationUtils.showNotification(
+        `Switched to ${selectedAlgorithmInfo?.name || 'selected'} algorithm`,
+        'info'
+      );
     } else {
-      NotificationUtils.showNotification(`Algorithm changed to ${selectedAlgorithmInfo?.name || 'selected'}`, 'info');
+      NotificationUtils.showNotification(
+        `Algorithm changed to ${selectedAlgorithmInfo?.name || 'selected'}`,
+        'info'
+      );
     }
   }
 

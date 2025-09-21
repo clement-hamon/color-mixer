@@ -140,7 +140,11 @@ export class ColorMixingAlgorithms {
   /**
    * Mix colors using the specified algorithm
    */
-  static mixColors(color1: string, color2: string, algorithm: MixingAlgorithm = MixingAlgorithm.SUBTRACTIVE_CMY): ColorMixingResult {
+  static mixColors(
+    color1: string,
+    color2: string,
+    algorithm: MixingAlgorithm = MixingAlgorithm.SUBTRACTIVE_CMY
+  ): ColorMixingResult {
     let result: string;
 
     switch (algorithm) {
@@ -172,7 +176,10 @@ export class ColorMixingAlgorithms {
   /**
    * Get available algorithms with descriptions
    */
-  static getAlgorithmDescriptions(): Record<MixingAlgorithm, { name: string; description: string }> {
+  static getAlgorithmDescriptions(): Record<
+    MixingAlgorithm,
+    { name: string; description: string }
+  > {
     return {
       [MixingAlgorithm.ADDITIVE_RGB]: {
         name: 'Additive RGB',
@@ -228,18 +235,18 @@ export class ColorMixingAlgorithms {
 
     // Observer = 2°, Illuminant = D65
     const x = rNorm * 0.4124564 + gNorm * 0.3575761 + bNorm * 0.1804375;
-    const y = rNorm * 0.2126729 + gNorm * 0.7151522 + bNorm * 0.0721750;
-    const z = rNorm * 0.0193339 + gNorm * 0.1191920 + bNorm * 0.9503041;
+    const y = rNorm * 0.2126729 + gNorm * 0.7151522 + bNorm * 0.072175;
+    const z = rNorm * 0.0193339 + gNorm * 0.119192 + bNorm * 0.9503041;
 
     // Normalize for D65 illuminant
     const xn = x / 0.95047;
-    const yn = y / 1.00000;
+    const yn = y / 1.0;
     const zn = z / 1.08883;
 
     // Convert to LAB
-    const fx = xn > 0.008856 ? Math.pow(xn, 1/3) : (7.787 * xn + 16/116);
-    const fy = yn > 0.008856 ? Math.pow(yn, 1/3) : (7.787 * yn + 16/116);
-    const fz = zn > 0.008856 ? Math.pow(zn, 1/3) : (7.787 * zn + 16/116);
+    const fx = xn > 0.008856 ? Math.pow(xn, 1 / 3) : 7.787 * xn + 16 / 116;
+    const fy = yn > 0.008856 ? Math.pow(yn, 1 / 3) : 7.787 * yn + 16 / 116;
+    const fz = zn > 0.008856 ? Math.pow(zn, 1 / 3) : 7.787 * zn + 16 / 116;
 
     return {
       l: 116 * fy - 16,
@@ -254,21 +261,21 @@ export class ColorMixingAlgorithms {
     const fx = a / 500 + fy;
     const fz = fy - b / 200;
 
-    const xn = fx > 0.206897 ? Math.pow(fx, 3) : (fx - 16/116) / 7.787;
-    const yn = fy > 0.206897 ? Math.pow(fy, 3) : (fy - 16/116) / 7.787;
-    const zn = fz > 0.206897 ? Math.pow(fz, 3) : (fz - 16/116) / 7.787;
+    const xn = fx > 0.206897 ? Math.pow(fx, 3) : (fx - 16 / 116) / 7.787;
+    const yn = fy > 0.206897 ? Math.pow(fy, 3) : (fy - 16 / 116) / 7.787;
+    const zn = fz > 0.206897 ? Math.pow(fz, 3) : (fz - 16 / 116) / 7.787;
 
     const x = xn * 0.95047;
-    const y = yn * 1.00000;
+    const y = yn * 1.0;
     const z = zn * 1.08883;
 
     let r = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
-    let g = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
+    let g = x * -0.969266 + y * 1.8760108 + z * 0.041556;
     let bVal = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
 
-    r = r > 0.0031308 ? 1.055 * Math.pow(r, 1/2.4) - 0.055 : 12.92 * r;
-    g = g > 0.0031308 ? 1.055 * Math.pow(g, 1/2.4) - 0.055 : 12.92 * g;
-    bVal = bVal > 0.0031308 ? 1.055 * Math.pow(bVal, 1/2.4) - 0.055 : 12.92 * bVal;
+    r = r > 0.0031308 ? 1.055 * Math.pow(r, 1 / 2.4) - 0.055 : 12.92 * r;
+    g = g > 0.0031308 ? 1.055 * Math.pow(g, 1 / 2.4) - 0.055 : 12.92 * g;
+    bVal = bVal > 0.0031308 ? 1.055 * Math.pow(bVal, 1 / 2.4) - 0.055 : 12.92 * bVal;
 
     return {
       r: Math.max(0, Math.min(255, Math.round(r * 255))),
@@ -278,7 +285,9 @@ export class ColorMixingAlgorithms {
   }
 
   private static rgbToHsv(r: number, g: number, b: number) {
-    r /= 255; g /= 255; b /= 255;
+    r /= 255;
+    g /= 255;
+    b /= 255;
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
     const diff = max - min;
@@ -303,13 +312,34 @@ export class ColorMixingAlgorithms {
     const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
     const m = v - c;
 
-    let r = 0, g = 0, b = 0;
-    if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
-    else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
-    else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
-    else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
-    else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
-    else if (h >= 300 && h < 360) { r = c; g = 0; b = x; }
+    let r = 0,
+      g = 0,
+      b = 0;
+    if (h >= 0 && h < 60) {
+      r = c;
+      g = x;
+      b = 0;
+    } else if (h >= 60 && h < 120) {
+      r = x;
+      g = c;
+      b = 0;
+    } else if (h >= 120 && h < 180) {
+      r = 0;
+      g = c;
+      b = x;
+    } else if (h >= 180 && h < 240) {
+      r = 0;
+      g = x;
+      b = c;
+    } else if (h >= 240 && h < 300) {
+      r = x;
+      g = 0;
+      b = c;
+    } else if (h >= 300 && h < 360) {
+      r = c;
+      g = 0;
+      b = x;
+    }
 
     return {
       r: Math.round((r + m) * 255),
