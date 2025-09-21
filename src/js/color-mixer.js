@@ -242,6 +242,24 @@ class ColorMixerGame {
   }
 
   /**
+   * Update mixed color based on current mixing slots
+   */
+  updateMixedColor() {
+    const activeColors = this.mixingSlots.filter((color) => color !== null);
+    
+    if (activeColors.length === 0) {
+      this.playerColor = '#000000';
+    } else if (activeColors.length === 1) {
+      this.playerColor = activeColors[0];
+    } else {
+      this.playerColor = this.blendMultipleColors(activeColors);
+    }
+
+    this.updatePlayerColor();
+    this.checkColorMatch();
+  }
+
+  /**
    * Mix colors in the mixing slots
    */
   mixColors() {
@@ -251,14 +269,7 @@ class ColorMixerGame {
       return;
     }
 
-    if (activeColors.length === 1) {
-      this.playerColor = activeColors[0];
-    } else {
-      this.playerColor = this.blendMultipleColors(activeColors);
-    }
-
-    this.updatePlayerColor();
-    this.checkColorMatch();
+    this.updateMixedColor();
   }
 
   /**

@@ -1,44 +1,80 @@
 {
-  "name": "color-mixer",
-  "version": "1.0.0",
+  "name": "color-mixer-pro",
+  "version": "2.0.0",
   "type": "module",
-  "description": "A Bootstrap HTML/JavaScript color mixer application",
-  "main": "index.js",
+  "description": "A professional color mixer application built with Bun",
+  "main": "src/index.js",
+  "engines": {
+    "bun": ">=1.0.0"
+  },
   "scripts": {
+    "dev": "bun run --watch src/server.js",
+    "build": "bun run lint && bun run format:check && bun run test && bun run bundle",
+    "bundle": "bun build src/index.js --outdir dist --minify --splitting --target browser --sourcemap",
+    "build:prod": "NODE_ENV=production bun run build && bun run optimize",
+    "optimize": "bun run compress-assets && bun run generate-manifest",
+    "compress-assets": "bun run scripts/compress.js",
+    "generate-manifest": "bun run scripts/generate-manifest.js",
     "serve": "bun --watch run dev",
-    "build": "bun run lint && bun run format:check && bun run copy-files",
+    "preview": "bun run build && bun run serve:dist",
+    "serve:dist": "bun serve dist --port 3000",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",
-    "format": "prettier --write \"src/**/*.{html,css,js}\"",
-    "format:check": "prettier --check \"src/**/*.{html,css,js}\"",
-    "copy-files": "mkdir -p dist && cp -r src/* dist/",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"src/**/*.{html,css,js,ts}\"",
+    "format:check": "prettier --check \"src/**/*.{html,css,js,ts}\"",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "test:e2e": "bun run playwright test",
+    "type-check": "bunx tsc --noEmit",
+    "analyze": "bun run scripts/analyze-bundle.js",
+    "lighthouse": "bunx lighthouse http://localhost:3000 --output html --output-path ./reports/lighthouse.html",
+    "audit": "bun audit",
+    "clean": "rm -rf dist coverage .bun-cache",
+    "prepare": "husky install",
+    "precommit": "lint-staged",
+    "deploy": "bun run build:prod && bun run scripts/deploy.js",
     "start": "bun run serve"
   },
   "keywords": [
-    "bootstrap",
+    "bun",
     "javascript",
     "html",
     "css",
-    "color-mixer"
+    "color-mixer",
+    "pwa",
+    "typescript"
   ],
   "author": "Clement Hamon",
   "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^5.3.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "@types/bun": "latest",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-html": "^8.0.0",
     "globals": "^15.0.0",
     "husky": "^9.0.0",
     "lint-staged": "^15.0.0",
-    "live-server": "^1.2.2",
-    "prettier": "^3.0.0"
+    "playwright": "^1.40.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
   },
   "lint-staged": {
-    "*.{html,css,js}": [
+    "*.{html,css,js,ts}": [
       "prettier --write",
       "eslint --fix"
     ]
+  },
+  "bun": {
+    "preload": ["./src/preload.js"],
+    "install": {
+      "cache": {
+        "disable": false
+      }
+    }
   }
 }
