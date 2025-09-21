@@ -1,4 +1,4 @@
-import { GameConfig, Level, ColorMatchResult, DragDropData, MixingSlot } from '../types/Game.js';
+import { GameConfig, ColorMatchResult, DragDropData, MixingSlot } from '../types/Game.js';
 import { GameElements } from '../types/DOM.js';
 import { ColorUtils } from '../utils/ColorUtils.js';
 import { DOMUtils } from '../utils/DOMUtils.js';
@@ -82,34 +82,39 @@ export class ColorMixerGame {
   }
 
   /**
-   * Initialize the game with the first level
+   * Initialize the game with a random target color
    */
   private initializeGame(): void {
     const state = this.gameState.getState();
-    this.gameStats.updateGameStats(state.currentLevel, state.currentScore, state.attemptsLeft);
-    this.loadLevel(state.currentLevel);
+    this.gameStats.updateGameStats(
+      state.roundsCompleted + 1,
+      state.currentScore,
+      state.attemptsLeft
+    );
+    this.loadNewRound();
     this.startTimer();
   }
 
   /**
-   * Load a specific level
+   * Load a new round with a random target color
    */
-  private loadLevel(levelNumber: number): void {
-    const level = this.gameState.getCurrentLevel();
-    if (!level) {
-      this.endGame();
-      return;
-    }
+  private loadNewRound(): void {
+    // Generate a new random target color
+    this.gameState.generateNewTarget();
+    const state = this.gameState.getState();
 
-    // Update level info
-    if (this.elements.levelName) this.elements.levelName.textContent = level.name;
+    // Update UI with new target
+    if (this.elements.levelName)
+      this.elements.levelName.textContent = `Round ${state.roundsCompleted + 1}`;
     if (this.elements.levelDescription)
-      this.elements.levelDescription.textContent = level.description;
-    if (this.elements.hintText) this.elements.hintText.textContent = level.hints[0];
+      this.elements.levelDescription.textContent =
+        'Mix colors to match the target as closely as possible!';
+    if (this.elements.hintText)
+      this.elements.hintText.textContent = 'The closer you get, the more points you earn!';
     if (this.elements.targetColorPreview) {
-      this.elements.targetColorPreview.style.backgroundColor = level.targetColor;
+      this.elements.targetColorPreview.style.backgroundColor = state.targetColor;
     }
-    if (this.elements.targetHex) this.elements.targetHex.textContent = level.targetColor;
+    if (this.elements.targetHex) this.elements.targetHex.textContent = state.targetColor;
 
     // Setup game components
     this.colorPalette.setupAvailableColors();
@@ -251,87 +256,77 @@ export class ColorMixerGame {
    */
   private checkColorMatch(): ColorMatchResult {
     const state = this.gameState.getState();
-    const level = this.gameState.getCurrentLevel();
+    const tolerance = this.gameState.getTolerance();
 
-    if (!level) {
-      return { similarity: 0, isMatch: false };
-    }
-
-    return this.colorComparison.checkColorMatch(
-      state.playerColor,
-      level.targetColor,
-      level.tolerance
-    );
+    return this.colorComparison.checkColorMatch(state.playerColor, state.targetColor, tolerance);
   }
 
   /**
-   * Submit the current color
+   * Submit the current color for scoring
    */
   submitColor(): void {
     const result = this.checkColorMatch();
-
-    if (result.isMatch) {
-      this.handleCorrectAnswer(result.similarity);
-    } else {
-      this.handleIncorrectAnswer();
-    }
+    this.handleColorSubmission(result.similarity);
   }
 
   /**
-   * Handle correct answer
+   * Handle color submission with proximity-based scoring
    */
-  private handleCorrectAnswer(similarity: number): void {
+  private handleColorSubmission(similarity: number): void {
     const state = this.gameState.getState();
     let points = 0;
 
+    // Calculate points based on similarity percentage
     if (similarity >= 95) {
       points = this.gameConfig.gameSettings.scoreMultiplier.perfect;
-      NotificationUtils.showNotification('Perfect match! 🎉', 'success');
+      NotificationUtils.showNotification(`Perfect match! 🎉 (+${points} points)`, 'success');
     } else if (similarity >= 85) {
       points = this.gameConfig.gameSettings.scoreMultiplier.close;
-      NotificationUtils.showNotification('Great match! 👏', 'success');
-    } else {
+      NotificationUtils.showNotification(`Great match! 👏 (+${points} points)`, 'success');
+    } else if (similarity >= 70) {
       points = this.gameConfig.gameSettings.scoreMultiplier.far;
-      NotificationUtils.showNotification('Good enough! ✓', 'success');
+      NotificationUtils.showNotification(`Good attempt! ✓ (+${points} points)`, 'success');
+    } else if (similarity >= 50) {
+      points = Math.floor(this.gameConfig.gameSettings.scoreMultiplier.far * 0.5);
+      NotificationUtils.showNotification(`Getting warmer! (+${points} points)`, 'info');
+    } else {
+      points = Math.floor(this.gameConfig.gameSettings.scoreMultiplier.far * 0.25);
+      NotificationUtils.showNotification(`Keep trying! (+${points} points)`, 'warning');
     }
 
+    // Update score and round counter
     this.gameState.updateState({
       currentScore: state.currentScore + points,
-      currentLevel: state.currentLevel + 1
+      roundsCompleted: state.roundsCompleted + 1
     });
 
+    // Check for score milestones
+    this.checkScoreMilestone();
+
+    // Start a new round after a brief delay
     setTimeout(() => {
       const newState = this.gameState.getState();
-      if (newState.currentLevel <= this.gameConfig.levels.length) {
-        this.loadLevel(newState.currentLevel);
-        this.gameStats.updateGameStats(
-          newState.currentLevel,
-          newState.currentScore,
-          newState.attemptsLeft
-        );
-      } else {
-        this.winGame();
-      }
+      this.loadNewRound();
+      this.gameStats.updateGameStats(
+        newState.roundsCompleted + 1,
+        newState.currentScore,
+        newState.attemptsLeft
+      );
     }, 2000);
   }
 
   /**
-   * Handle incorrect answer
+   * Use an attempt (for actions that consume attempts)
    */
-  private handleIncorrectAnswer(): void {
+  private useAttempt(): void {
     const state = this.gameState.getState();
     const newAttemptsLeft = state.attemptsLeft - 1;
 
     this.gameState.updateState({ attemptsLeft: newAttemptsLeft });
-    this.gameStats.updateGameStats(state.currentLevel, state.currentScore, newAttemptsLeft);
+    this.gameStats.updateGameStats(state.roundsCompleted + 1, state.currentScore, newAttemptsLeft);
 
     if (newAttemptsLeft <= 0) {
       this.endGame();
-    } else {
-      NotificationUtils.showNotification(
-        `Not quite right. ${newAttemptsLeft} attempts left.`,
-        'warning'
-      );
     }
   }
 
@@ -357,32 +352,34 @@ export class ColorMixerGame {
   }
 
   /**
-   * Show hint for current level
+   * Show hint for color mixing
    */
   showHint(): void {
-    const level = this.gameState.getCurrentLevel();
-    if (level && level.hints.length > 0) {
-      const hint = level.hints[Math.floor(Math.random() * level.hints.length)];
-      NotificationUtils.showNotification(`Hint: ${hint}`, 'info');
-    }
+    const hints = [
+      'Try mixing primary colors (red, blue, yellow) to create secondary colors!',
+      'White lightens colors, black darkens them.',
+      'Complementary colors mixed together create brown or gray tones.',
+      'Start with one primary color and gradually add others.',
+      'Small amounts of white can create pastels.'
+    ];
+
+    const randomHint = hints[Math.floor(Math.random() * hints.length)];
+    NotificationUtils.showNotification(`Hint: ${randomHint}`, 'info');
   }
 
   /**
-   * Show algorithmic solution for current level
+   * Show algorithmic solution for current target
    */
   showSolution(): void {
-    const level = this.gameState.getCurrentLevel();
-    if (!level) {
-      NotificationUtils.showNotification('No level loaded to solve!', 'warning');
-      return;
-    }
+    const state = this.gameState.getState();
+    const tolerance = this.gameState.getTolerance();
 
     // Clear current mixing slots first
     this.clearMixingCanvas();
 
-    // Solve the current level
-    const result = this.colorSolver.solve(level.targetColor, {
-      tolerance: level.tolerance,
+    // Solve the current target
+    const result = this.colorSolver.solve(state.targetColor, {
+      tolerance: tolerance,
       availableColors: [
         '#ff0000', // Red
         '#00ff00', // Green
@@ -454,28 +451,23 @@ export class ColorMixerGame {
   }
 
   /**
-   * Skip current level
+   * Skip current round (generate new target)
    */
-  skipLevel(): void {
+  skipRound(): void {
     const state = this.gameState.getState();
     if (state.attemptsLeft > 1) {
       this.gameState.updateState({
-        attemptsLeft: state.attemptsLeft - 2,
-        currentLevel: state.currentLevel + 1
+        attemptsLeft: state.attemptsLeft - 1
       });
 
+      this.loadNewRound();
       const newState = this.gameState.getState();
-      if (newState.currentLevel <= this.gameConfig.levels.length) {
-        this.loadLevel(newState.currentLevel);
-        this.gameStats.updateGameStats(
-          newState.currentLevel,
-          newState.currentScore,
-          newState.attemptsLeft
-        );
-        NotificationUtils.showNotification('Level skipped!', 'info');
-      } else {
-        this.endGame();
-      }
+      this.gameStats.updateGameStats(
+        newState.roundsCompleted + 1,
+        newState.currentScore,
+        newState.attemptsLeft
+      );
+      NotificationUtils.showNotification('New target generated!', 'info');
     } else {
       NotificationUtils.showNotification('Not enough attempts to skip!', 'warning');
     }
@@ -514,26 +506,31 @@ export class ColorMixerGame {
   }
 
   /**
-   * Win the game
+   * Celebrate a high score milestone
    */
-  private winGame(): void {
-    if (this.gameTimer) {
-      clearInterval(this.gameTimer);
-    }
-
+  private checkScoreMilestone(): void {
     const state = this.gameState.getState();
-    this.gameState.updateState({ isGameActive: false });
+    const score = state.currentScore;
 
-    NotificationUtils.showNotification(
-      `🎉 Congratulations! You completed all levels! Final Score: ${state.currentScore}`,
-      'success'
-    );
-
-    setTimeout(() => {
-      if (confirm('Congratulations! You won! Play again?')) {
-        this.resetGame();
-      }
-    }, 3000);
+    // Check for score milestones
+    if (score >= 50000 && score < 50100) {
+      NotificationUtils.showNotification(
+        "� Amazing! You've reached 50,000 points! You're a true color master!",
+        'success'
+      );
+    } else if (score >= 25000 && score < 25100) {
+      NotificationUtils.showNotification(
+        "🎯 Incredible! 25,000 points! You're getting really good at this!",
+        'success'
+      );
+    } else if (score >= 10000 && score < 10100) {
+      NotificationUtils.showNotification(
+        "⭐ Fantastic! You've hit 10,000 points! Keep it up!",
+        'success'
+      );
+    } else if (score >= 5000 && score < 5100) {
+      NotificationUtils.showNotification('🎉 Great job! 5,000 points earned!', 'success');
+    }
   }
 
   /**

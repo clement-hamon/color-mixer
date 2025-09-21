@@ -1,4 +1,4 @@
-import { GameState, GameConfig, Level, MixingSlot } from '../types/Game.js';
+import { GameState, GameConfig, MixingSlot } from '../types/Game.js';
 
 export class GameStateManager {
   private state: GameState;
@@ -9,14 +9,33 @@ export class GameStateManager {
 
   private createInitialState(): GameState {
     return {
-      currentLevel: 1,
       currentScore: 0,
       attemptsLeft: this.gameConfig.gameSettings.maxAttempts,
       timeLeft: this.gameConfig.gameSettings.timeLimit,
       isGameActive: true,
       playerColor: '#000000',
-      mixingSlots: []
+      targetColor: this.generateRandomColor(),
+      mixingSlots: [],
+      roundsCompleted: 0
     };
+  }
+
+  /**
+   * Generate a random color in hex format
+   */
+  private generateRandomColor(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return this.rgbToHex(r, g, b);
+  }
+
+  /**
+   * Generate a new random target color
+   */
+  generateNewTarget(): void {
+    const newTargetColor = this.generateRandomColor();
+    this.state.targetColor = newTargetColor;
   }
 
   getState(): GameState {
@@ -27,8 +46,18 @@ export class GameStateManager {
     this.state = { ...this.state, ...updates };
   }
 
-  getCurrentLevel(): Level | undefined {
-    return this.gameConfig.levels.find((l) => l.id === this.state.currentLevel);
+  /**
+   * Get the current target color
+   */
+  getCurrentTargetColor(): string {
+    return this.state.targetColor;
+  }
+
+  /**
+   * Get the current tolerance for color matching
+   */
+  getTolerance(): number {
+    return this.gameConfig.gameSettings.tolerance;
   }
 
   initializeMixingSlots(slotCount: number): void {

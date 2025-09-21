@@ -6,9 +6,9 @@ export class GameStats {
   /**
    * Update game statistics display
    */
-  updateGameStats(currentLevel: number, currentScore: number, attemptsLeft: number): void {
+  updateGameStats(currentRound: number, currentScore: number, attemptsLeft: number): void {
     if (this.elements.currentLevel) {
-      this.elements.currentLevel.textContent = currentLevel.toString();
+      this.elements.currentLevel.textContent = currentRound.toString();
     }
     if (this.elements.currentScore) {
       this.elements.currentScore.textContent = currentScore.toString();

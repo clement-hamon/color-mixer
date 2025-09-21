@@ -27,6 +27,6 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["bun-types"]
   },
-  "include": ["src/**/*", "tests/**/*", "scripts/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist", "coverage", ".bun-cache"]
 }

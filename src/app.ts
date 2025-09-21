@@ -29,7 +29,7 @@ window.clearMixingCanvas = () => window.colorMixerGame.clearMixingCanvas();
 window.submitColor = () => window.colorMixerGame.submitColor();
 window.showHint = () => window.colorMixerGame.showHint();
 window.showSolution = () => window.colorMixerGame.showSolution();
-window.skipLevel = () => window.colorMixerGame.skipLevel();
+window.skipLevel = () => window.colorMixerGame.skipRound();
 window.resetGame = () => window.colorMixerGame.resetGame();
 window.handleColorDragStart = (event: DragEvent, color: string) =>
   window.colorMixerGame.handleColorDragStart(event, color);

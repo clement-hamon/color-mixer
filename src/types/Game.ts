@@ -1,12 +1,12 @@
 export interface GameConfig {
   gameSettings: GameSettings;
-  levels: Level[];
 }
 
 export interface GameSettings {
   maxAttempts: number;
   timeLimit: number;
   mixingSlots: number;
+  tolerance: number;
   scoreMultiplier: {
     perfect: number;
     close: number;
@@ -14,25 +14,15 @@ export interface GameSettings {
   };
 }
 
-export interface Level {
-  id: number;
-  name: string;
-  description: string;
-  targetColor: string;
-  availableColors: string[];
-  mixingSlots: number;
-  tolerance: number;
-  hints: string[];
-}
-
 export interface GameState {
-  currentLevel: number;
   currentScore: number;
   attemptsLeft: number;
   timeLeft: number;
   isGameActive: boolean;
   playerColor: string;
+  targetColor: string;
   mixingSlots: MixingSlot[];
+  roundsCompleted: number;
 }
 
 export interface MixingSlot {
