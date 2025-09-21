@@ -106,6 +106,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: 📥 Download Pages artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: github-pages
+          path: ./dist
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
