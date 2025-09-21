@@ -58,22 +58,22 @@ The pipeline includes:
 
 ```bash
 # Start development server
-npm run dev
+bun run dev
 
 # Build for production
-npm run build
+bun run build
 
 # Run linting
-npm run lint
+bun run lint
 
 # Fix linting issues automatically
-npm run lint:fix
+bun run lint:fix
 
 # Format code
-npm run format
+bun run format
 
 # Check if code is properly formatted
-npm run format:check
+bun run format:check
 ```
 
 ## Triggering Deployments
@@ -97,7 +97,7 @@ Deployments are triggered automatically when you:
 1. Check the **Actions** tab for error details
 2. Common issues:
    - Linting errors: Fix code style issues
-   - Formatting errors: Run `npm run format`
+   - Formatting errors: Run `bun run format`
    - Build errors: Check for syntax errors
 
 ### If site doesn't load:
@@ -108,9 +108,9 @@ Deployments are triggered automatically when you:
 
 ### Local development issues:
 
-1. Make sure all dependencies are installed: `npm install`
-2. Check Node.js version (requires v18+)
-3. Clear npm cache: `npm cache clean --force`
+1. Make sure all dependencies are installed: `bun install`
+2. Check Bun version (latest recommended)
+3. Clear Bun cache: `bun pm cache rm`
 
 ## Security Notes
 

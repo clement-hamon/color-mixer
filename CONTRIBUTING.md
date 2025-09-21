@@ -18,12 +18,12 @@ Thank you for your interest in contributing to Color Mixer! This document provid
 
 2. **Install dependencies**
    ```bash
-   npm install
+   bun install
    ```
 
 3. **Start development server**
    ```bash
-   npm run dev
+   bun run dev
    ```
 
 ## Code Quality Standards
@@ -63,10 +63,10 @@ Husky runs automatic checks before each commit:
 
 3. **Test your changes**
    ```bash
-   npm run lint        # Check for linting errors
-   npm run format      # Format your code
-   npm run build       # Test the build process
-   npm run dev         # Test locally
+   bun run lint        # Check for linting errors
+   bun run format      # Format your code
+   bun run build       # Test the build process
+   bun run dev         # Test locally
    ```
 
 4. **Commit your changes**

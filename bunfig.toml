@@ -1,0 +1,28 @@
+# Bun configuration file
+# See https://bun.sh/docs/runtime/bunfig for more information
+
+[install]
+# Configure package installation
+registry = "https://registry.npmjs.org"
+cache = true
+exact = false
+
+[install.lockfile]
+# Enable lockfile generation
+enabled = true
+save = true
+
+[dev]
+# Development server configuration
+port = 3000
+watch = true
+
+[build]
+# Build configuration
+outdir = "dist"
+minify = true
+sourcemap = true
+
+# Scripts configuration
+[scripts]
+# Add any custom script configurations here if needed

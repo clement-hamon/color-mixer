@@ -355,3 +355,146 @@ footer a:hover {
     border: 2px solid #000 !important;
   }
 }
+
+/* Game-specific styles */
+.target-color-preview {
+  width: 100%;
+  height: 200px;
+  border-radius: 15px;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.available-color {
+  width: 100%;
+  height: 80px;
+  border-radius: 10px;
+  border: 3px solid #dee2e6;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.available-color:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--primary-color);
+}
+
+.available-color .color-label {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  backdrop-filter: blur(5px);
+}
+
+.mixing-slot {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  border: 3px dashed #dee2e6;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+}
+
+.mixing-slot.empty {
+  border-style: dashed;
+  background: repeating-linear-gradient(45deg, #f8f9fa, #f8f9fa 10px, #e9ecef 10px, #e9ecef 20px);
+}
+
+.mixing-slot:not(.empty) {
+  border-style: solid;
+  border-color: var(--success-color);
+}
+
+.mixing-slot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mixing-slot .slot-label {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  backdrop-filter: blur(5px);
+}
+
+.mixing-slot .remove-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background: var(--danger-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mixing-slot .remove-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.color-comparison {
+  text-align: left;
+}
+
+.progress {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: width 0.6s ease;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Game stats cards */
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Level hint alert */
+#levelHint {
+  border-left: 4px solid var(--info-color);
+  background: rgba(23, 162, 184, 0.1);
+}
+
+/* Game controls */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}

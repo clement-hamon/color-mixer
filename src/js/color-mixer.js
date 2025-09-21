@@ -1,18 +1,22 @@
 /**
- * Color Mixer JavaScript Application
- * Handles color mixing, conversion, and user interactions
+ * Color Mixer Game JavaScript Application
+ * Handles color mixing game mechanics, level progression, and user interactions
  */
 
-class ColorMixer {
+class ColorMixerGame {
   constructor() {
-    this.color1 = '#ff6b6b';
-    this.color2 = '#4ecdc4';
-    this.mixRatio = 50;
-    this.mixedColor = '';
+    this.gameConfig = null;
+    this.currentLevel = 1;
+    this.currentScore = 0;
+    this.attemptsLeft = 10;
+    this.timeLeft = 300; // 5 minutes
+    this.gameTimer = null;
+    this.mixingSlots = [];
+    this.playerColor = '#000000';
+    this.isGameActive = false;
 
     this.initializeElements();
-    this.bindEventListeners();
-    this.updateMixedColor();
+    this.loadGameConfig();
     this.initializeHeroAnimation();
   }
 
@@ -21,59 +25,56 @@ class ColorMixer {
    */
   initializeElements() {
     this.elements = {
-      color1Input: document.getElementById('color1'),
-      color2Input: document.getElementById('color2'),
-      color1Hex: document.getElementById('color1Hex'),
-      color2Hex: document.getElementById('color2Hex'),
-      mixRatio: document.getElementById('mixRatio'),
-      ratioValue: document.getElementById('ratioValue'),
-      color1Preview: document.getElementById('color1Preview'),
-      color2Preview: document.getElementById('color2Preview'),
-      mixedColorPreview: document.getElementById('mixedColorPreview'),
-      mixedHex: document.getElementById('mixedHex'),
-      mixedRgb: document.getElementById('mixedRgb'),
-      mixedHsl: document.getElementById('mixedHsl'),
+      // Game stats
+      currentLevel: document.getElementById('currentLevel'),
+      currentScore: document.getElementById('currentScore'),
+      attemptsLeft: document.getElementById('attemptsLeft'),
+      timeLeft: document.getElementById('timeLeft'),
+
+      // Target color
+      targetColorPreview: document.getElementById('targetColorPreview'),
+      levelName: document.getElementById('levelName'),
+      levelDescription: document.getElementById('levelDescription'),
+      hintText: document.getElementById('hintText'),
+
+      // Game areas
+      availableColorsContainer: document.getElementById('availableColorsContainer'),
+      mixingCanvas: document.getElementById('mixingCanvas'),
+      playerColorPreview: document.getElementById('playerColorPreview'),
+
+      // Color comparison
+      matchProgress: document.getElementById('matchProgress'),
+      playerHex: document.getElementById('playerHex'),
+      targetHex: document.getElementById('targetHex'),
+      submitBtn: document.getElementById('submitBtn'),
+
+      // Other
       heroColorPreview: document.getElementById('heroColorPreview'),
       brandLink: document.getElementById('brandLink')
     };
+
+    // Check if critical elements exist
+    const criticalElements = ['availableColorsContainer', 'mixingCanvas', 'playerColorPreview'];
+    const missingElements = criticalElements.filter((id) => !this.elements[id]);
+
+    if (missingElements.length > 0) {
+      console.warn('Missing critical DOM elements:', missingElements);
+    }
+
+    this.bindEventListeners();
   }
 
   /**
    * Bind event listeners to DOM elements
    */
   bindEventListeners() {
-    // Color input events
-    this.elements.color1Input.addEventListener('input', (e) => {
-      this.updateColor1(e.target.value);
-    });
-
-    this.elements.color2Input.addEventListener('input', (e) => {
-      this.updateColor2(e.target.value);
-    });
-
-    // Hex input events
-    this.elements.color1Hex.addEventListener('input', (e) => {
-      if (this.isValidHex(e.target.value)) {
-        this.updateColor1(e.target.value);
-      }
-    });
-
-    this.elements.color2Hex.addEventListener('input', (e) => {
-      if (this.isValidHex(e.target.value)) {
-        this.updateColor2(e.target.value);
-      }
-    });
-
-    // Mix ratio slider
-    this.elements.mixRatio.addEventListener('input', (e) => {
-      this.updateMixRatio(parseInt(e.target.value));
-    });
-
-    // Brand link click
-    this.elements.brandLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.scrollToTop();
-    });
+    // Brand link click - check if element exists first
+    if (this.elements.brandLink) {
+      this.elements.brandLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.scrollToTop();
+      });
+    }
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -81,13 +82,11 @@ class ColorMixer {
         switch (e.key) {
           case 'r':
             e.preventDefault();
-            this.randomizeColors();
+            this.resetGame();
             break;
-          case 'c':
-            if (e.target.tagName !== 'INPUT') {
-              e.preventDefault();
-              this.copyToClipboard();
-            }
+          case 'h':
+            e.preventDefault();
+            this.showHint();
             break;
         }
       }
@@ -95,128 +94,423 @@ class ColorMixer {
   }
 
   /**
-   * Update color 1
-   * @param {string} color - Hex color value
+   * Load game configuration from JSON file
    */
-  updateColor1(color) {
-    this.color1 = color;
-    this.elements.color1Input.value = color;
-    this.elements.color1Hex.value = color;
-    this.elements.color1Preview.style.backgroundColor = color;
-    this.updateMixedColor();
+  async loadGameConfig() {
+    try {
+      const response = await fetch('data/game-config.json');
+      this.gameConfig = await response.json();
+      this.initializeGame();
+    } catch (error) {
+      console.error('Failed to load game configuration:', error);
+      this.showNotification('Failed to load game configuration', 'error');
+    }
   }
 
   /**
-   * Update color 2
-   * @param {string} color - Hex color value
+   * Initialize the game with the first level
    */
-  updateColor2(color) {
-    this.color2 = color;
-    this.elements.color2Input.value = color;
-    this.elements.color2Hex.value = color;
-    this.elements.color2Preview.style.backgroundColor = color;
-    this.updateMixedColor();
+  initializeGame() {
+    this.currentLevel = 1;
+    this.currentScore = 0;
+    this.attemptsLeft = this.gameConfig.gameSettings.maxAttempts;
+    this.timeLeft = this.gameConfig.gameSettings.timeLimit;
+    this.isGameActive = true;
+
+    this.updateGameStats();
+    this.loadLevel(this.currentLevel);
+    this.startTimer();
   }
 
   /**
-   * Update mix ratio
-   * @param {number} ratio - Mix ratio (0-100)
+   * Load a specific level
    */
-  updateMixRatio(ratio) {
-    this.mixRatio = ratio;
-    this.elements.ratioValue.textContent = `${ratio}%`;
-    this.updateMixedColor();
-  }
-
-  /**
-   * Mix two colors based on the current ratio
-   */
-  updateMixedColor() {
-    const rgb1 = this.hexToRgb(this.color1);
-    const rgb2 = this.hexToRgb(this.color2);
-
-    if (!rgb1 || !rgb2) {
+  loadLevel(levelNumber) {
+    const level = this.gameConfig.levels.find((l) => l.id === levelNumber);
+    if (!level) {
+      this.endGame();
       return;
     }
 
-    const ratio = this.mixRatio / 100;
-    const mixedRgb = {
-      r: Math.round(rgb1.r * (1 - ratio) + rgb2.r * ratio),
-      g: Math.round(rgb1.g * (1 - ratio) + rgb2.g * ratio),
-      b: Math.round(rgb1.b * (1 - ratio) + rgb2.b * ratio)
-    };
+    this.currentLevelData = level;
 
-    this.mixedColor = this.rgbToHex(mixedRgb.r, mixedRgb.g, mixedRgb.b);
+    // Update level info
+    this.elements.levelName.textContent = level.name;
+    this.elements.levelDescription.textContent = level.description;
+    this.elements.hintText.textContent = level.hints[0];
+    this.elements.targetColorPreview.style.backgroundColor = level.targetColor;
+    this.elements.targetHex.textContent = level.targetColor;
 
-    this.updateMixedColorDisplay(mixedRgb);
+    // Setup available colors
+    this.setupAvailableColors(level.availableColors);
+
+    // Setup mixing canvas
+    this.setupMixingCanvas(level.mixingSlots);
+
+    // Reset player color
+    this.playerColor = '#000000';
+    this.updatePlayerColor();
   }
 
   /**
-   * Update the mixed color display
-   * @param {Object} rgb - RGB color object
+   * Setup available colors palette
    */
-  updateMixedColorDisplay(rgb) {
-    const hsl = this.rgbToHsl(rgb.r, rgb.g, rgb.b);
+  setupAvailableColors(colors) {
+    this.elements.availableColorsContainer.innerHTML = '';
 
-    // Update preview
-    this.elements.mixedColorPreview.style.backgroundColor = this.mixedColor;
-
-    // Update color information
-    this.elements.mixedHex.textContent = this.mixedColor;
-    this.elements.mixedRgb.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-    this.elements.mixedHsl.textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
-
-    // Add animation class
-    this.elements.mixedColorPreview.classList.add('fade-in-up');
-    setTimeout(() => {
-      this.elements.mixedColorPreview.classList.remove('fade-in-up');
-    }, 600);
+    colors.forEach((color, _index) => {
+      const colorDiv = document.createElement('div');
+      colorDiv.className = 'col-md-2 mb-3';
+      colorDiv.innerHTML = `
+        <div class="available-color" style="background-color: ${color}" 
+             data-color="${color}" 
+             onclick="selectAvailableColor('${color}')">
+          <div class="color-label">${color}</div>
+        </div>
+      `;
+      this.elements.availableColorsContainer.appendChild(colorDiv);
+    });
   }
 
   /**
-   * Generate random colors
+   * Setup mixing canvas slots
    */
-  randomizeColors() {
-    const randomColor1 = this.generateRandomColor();
-    const randomColor2 = this.generateRandomColor();
+  setupMixingCanvas(slotCount) {
+    this.elements.mixingCanvas.innerHTML = '';
+    this.mixingSlots = new Array(slotCount).fill(null);
 
-    this.updateColor1(randomColor1);
-    this.updateColor2(randomColor2);
-
-    // Add some visual feedback
-    this.showNotification('Random colors generated!', 'success');
-  }
-
-  /**
-   * Generate a random hex color
-   * @returns {string} Random hex color
-   */
-  generateRandomColor() {
-    return (
-      '#' +
-      Math.floor(Math.random() * 16777215)
-        .toString(16)
-        .padStart(6, '0')
-    );
-  }
-
-  /**
-   * Copy mixed color hex to clipboard
-   */
-  async copyToClipboard() {
-    try {
-      await navigator.clipboard.writeText(this.mixedColor);
-      this.showNotification('Color copied to clipboard!', 'success');
-    } catch {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = this.mixedColor;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      this.showNotification('Color copied to clipboard!', 'success');
+    for (let i = 0; i < slotCount; i++) {
+      const slotDiv = document.createElement('div');
+      slotDiv.className = 'col-md-2 mb-3';
+      slotDiv.innerHTML = `
+        <div class="mixing-slot empty" data-slot="${i}" onclick="clearMixingSlot(${i})">
+          <div class="slot-label">Slot ${i + 1}</div>
+          <div class="remove-btn" style="display: none;">×</div>
+        </div>
+      `;
+      this.elements.mixingCanvas.appendChild(slotDiv);
     }
+  }
+
+  /**
+   * Select an available color
+   */
+  selectAvailableColor(color) {
+    const emptySlot = this.mixingSlots.findIndex((slot) => slot === null);
+    if (emptySlot !== -1) {
+      this.addColorToSlot(color, emptySlot);
+    } else {
+      this.showNotification('All mixing slots are full! Clear a slot first.', 'warning');
+    }
+  }
+
+  /**
+   * Add color to mixing slot
+   */
+  addColorToSlot(color, slotIndex) {
+    this.mixingSlots[slotIndex] = color;
+    const slotElement = document.querySelector(`[data-slot="${slotIndex}"]`);
+    slotElement.style.backgroundColor = color;
+    slotElement.classList.remove('empty');
+    slotElement.querySelector('.slot-label').textContent = color;
+    slotElement.querySelector('.remove-btn').style.display = 'block';
+
+    this.updateMixedColor();
+  }
+
+  /**
+   * Clear a mixing slot
+   */
+  clearMixingSlot(slotIndex) {
+    this.mixingSlots[slotIndex] = null;
+    const slotElement = document.querySelector(`[data-slot="${slotIndex}"]`);
+    slotElement.style.backgroundColor = '';
+    slotElement.classList.add('empty');
+    slotElement.querySelector('.slot-label').textContent = `Slot ${slotIndex + 1}`;
+    slotElement.querySelector('.remove-btn').style.display = 'none';
+
+    this.updateMixedColor();
+  }
+
+  /**
+   * Clear all mixing slots
+   */
+  clearMixingCanvas() {
+    for (let i = 0; i < this.mixingSlots.length; i++) {
+      this.clearMixingSlot(i);
+    }
+  }
+
+  /**
+   * Mix colors in the mixing slots
+   */
+  mixColors() {
+    const activeColors = this.mixingSlots.filter((color) => color !== null);
+    if (activeColors.length === 0) {
+      this.showNotification('Add colors to mixing slots first!', 'warning');
+      return;
+    }
+
+    if (activeColors.length === 1) {
+      this.playerColor = activeColors[0];
+    } else {
+      this.playerColor = this.blendMultipleColors(activeColors);
+    }
+
+    this.updatePlayerColor();
+    this.checkColorMatch();
+  }
+
+  /**
+   * Blend multiple colors together
+   */
+  blendMultipleColors(colors) {
+    if (colors.length === 0) {
+      return '#000000';
+    }
+    if (colors.length === 1) {
+      return colors[0];
+    }
+
+    let totalR = 0,
+      totalG = 0,
+      totalB = 0;
+
+    colors.forEach((color) => {
+      const rgb = this.hexToRgb(color);
+      totalR += rgb.r;
+      totalG += rgb.g;
+      totalB += rgb.b;
+    });
+
+    const avgR = Math.round(totalR / colors.length);
+    const avgG = Math.round(totalG / colors.length);
+    const avgB = Math.round(totalB / colors.length);
+
+    return this.rgbToHex(avgR, avgG, avgB);
+  }
+
+  /**
+   * Update player color display
+   */
+  updatePlayerColor() {
+    this.elements.playerColorPreview.style.backgroundColor = this.playerColor;
+    this.elements.playerHex.textContent = this.playerColor;
+  }
+
+  /**
+   * Check if player color matches target
+   */
+  checkColorMatch() {
+    const targetRgb = this.hexToRgb(this.currentLevelData.targetColor);
+    const playerRgb = this.hexToRgb(this.playerColor);
+
+    const colorDistance = this.calculateColorDistance(targetRgb, playerRgb);
+    const maxDistance = Math.sqrt(3 * 255 * 255); // Maximum possible distance
+    const similarity = Math.max(0, 100 - (colorDistance / maxDistance) * 100);
+
+    this.elements.matchProgress.style.width = `${similarity}%`;
+    this.elements.matchProgress.textContent = `${Math.round(similarity)}%`;
+
+    // Update progress bar color based on similarity
+    this.elements.matchProgress.className = 'progress-bar';
+    if (similarity >= 90) {
+      this.elements.matchProgress.classList.add('bg-success');
+    } else if (similarity >= 70) {
+      this.elements.matchProgress.classList.add('bg-warning');
+    } else {
+      this.elements.matchProgress.classList.add('bg-danger');
+    }
+
+    // Enable submit button if close enough
+    const isCloseEnough = colorDistance <= this.currentLevelData.tolerance;
+    this.elements.submitBtn.disabled = !isCloseEnough;
+
+    return { similarity, isMatch: isCloseEnough };
+  }
+
+  /**
+   * Calculate color distance using Euclidean distance
+   */
+  calculateColorDistance(rgb1, rgb2) {
+    const rDiff = rgb1.r - rgb2.r;
+    const gDiff = rgb1.g - rgb2.g;
+    const bDiff = rgb1.b - rgb2.b;
+    return Math.sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
+  }
+
+  /**
+   * Submit the current color
+   */
+  submitColor() {
+    const result = this.checkColorMatch();
+
+    if (result.isMatch) {
+      this.handleCorrectAnswer(result.similarity);
+    } else {
+      this.handleIncorrectAnswer();
+    }
+  }
+
+  /**
+   * Handle correct answer
+   */
+  handleCorrectAnswer(similarity) {
+    let points = 0;
+    if (similarity >= 95) {
+      points = this.gameConfig.gameSettings.scoreMultiplier.perfect;
+      this.showNotification('Perfect match! 🎉', 'success');
+    } else if (similarity >= 85) {
+      points = this.gameConfig.gameSettings.scoreMultiplier.close;
+      this.showNotification('Great match! 👏', 'success');
+    } else {
+      points = this.gameConfig.gameSettings.scoreMultiplier.far;
+      this.showNotification('Good enough! ✓', 'success');
+    }
+
+    this.currentScore += points;
+    this.currentLevel++;
+
+    setTimeout(() => {
+      if (this.currentLevel <= this.gameConfig.levels.length) {
+        this.loadLevel(this.currentLevel);
+        this.updateGameStats();
+      } else {
+        this.winGame();
+      }
+    }, 2000);
+  }
+
+  /**
+   * Handle incorrect answer
+   */
+  handleIncorrectAnswer() {
+    this.attemptsLeft--;
+    this.updateGameStats();
+
+    if (this.attemptsLeft <= 0) {
+      this.endGame();
+    } else {
+      this.showNotification(`Not quite right. ${this.attemptsLeft} attempts left.`, 'warning');
+    }
+  }
+
+  /**
+   * Start game timer
+   */
+  startTimer() {
+    if (this.gameTimer) {
+      clearInterval(this.gameTimer);
+    }
+
+    this.gameTimer = setInterval(() => {
+      this.timeLeft--;
+      this.updateTimeDisplay();
+
+      if (this.timeLeft <= 0) {
+        this.endGame();
+      }
+    }, 1000);
+  }
+
+  /**
+   * Update time display
+   */
+  updateTimeDisplay() {
+    const minutes = Math.floor(this.timeLeft / 60);
+    const seconds = this.timeLeft % 60;
+    this.elements.timeLeft.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  /**
+   * Update game statistics display
+   */
+  updateGameStats() {
+    this.elements.currentLevel.textContent = this.currentLevel;
+    this.elements.currentScore.textContent = this.currentScore;
+    this.elements.attemptsLeft.textContent = this.attemptsLeft;
+  }
+
+  /**
+   * Show hint for current level
+   */
+  showHint() {
+    if (this.currentLevelData && this.currentLevelData.hints.length > 0) {
+      const hint =
+        this.currentLevelData.hints[Math.floor(Math.random() * this.currentLevelData.hints.length)];
+      this.showNotification(`Hint: ${hint}`, 'info');
+    }
+  }
+
+  /**
+   * Skip current level
+   */
+  skipLevel() {
+    if (this.attemptsLeft > 1) {
+      this.attemptsLeft -= 2; // Penalty for skipping
+      this.currentLevel++;
+
+      if (this.currentLevel <= this.gameConfig.levels.length) {
+        this.loadLevel(this.currentLevel);
+        this.updateGameStats();
+        this.showNotification('Level skipped!', 'info');
+      } else {
+        this.endGame();
+      }
+    } else {
+      this.showNotification('Not enough attempts to skip!', 'warning');
+    }
+  }
+
+  /**
+   * Reset the game
+   */
+  resetGame() {
+    if (this.gameTimer) {
+      clearInterval(this.gameTimer);
+    }
+    this.initializeGame();
+    this.showNotification('Game reset!', 'info');
+  }
+
+  /**
+   * End the game
+   */
+  endGame() {
+    if (this.gameTimer) {
+      clearInterval(this.gameTimer);
+    }
+    this.isGameActive = false;
+
+    this.showNotification(`Game Over! Final Score: ${this.currentScore}`, 'info');
+
+    // Show restart option
+    setTimeout(() => {
+      if (confirm('Game Over! Would you like to restart?')) {
+        this.resetGame();
+      }
+    }, 2000);
+  }
+
+  /**
+   * Win the game
+   */
+  winGame() {
+    if (this.gameTimer) {
+      clearInterval(this.gameTimer);
+    }
+    this.isGameActive = false;
+
+    this.showNotification(
+      `🎉 Congratulations! You completed all levels! Final Score: ${this.currentScore}`,
+      'success'
+    );
+
+    setTimeout(() => {
+      if (confirm('Congratulations! You won! Play again?')) {
+        this.resetGame();
+      }
+    }, 3000);
   }
 
   /**
@@ -295,10 +589,10 @@ class ColorMixer {
   }
 
   /**
-   * Scroll to mixer section
+   * Scroll to game section
    */
-  scrollToMixer() {
-    document.getElementById('mixer').scrollIntoView({
+  scrollToGame() {
+    document.getElementById('game').scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     });
@@ -405,31 +699,45 @@ class ColorMixer {
 
 // Global functions for HTML onclick handlers
 /* eslint-disable no-unused-vars */
-function scrollToMixer() {
-  colorMixer.scrollToMixer();
+function scrollToGame() {
+  window.colorMixerGame.scrollToGame();
 }
 
-function randomizeColors() {
-  colorMixer.randomizeColors();
+function selectAvailableColor(color) {
+  window.colorMixerGame.selectAvailableColor(color);
 }
 
-function copyToClipboard() {
-  colorMixer.copyToClipboard();
+function clearMixingSlot(slotIndex) {
+  window.colorMixerGame.clearMixingSlot(slotIndex);
+}
+
+function mixColors() {
+  window.colorMixerGame.mixColors();
+}
+
+function clearMixingCanvas() {
+  window.colorMixerGame.clearMixingCanvas();
+}
+
+function submitColor() {
+  window.colorMixerGame.submitColor();
+}
+
+function showHint() {
+  window.colorMixerGame.showHint();
+}
+
+function skipLevel() {
+  window.colorMixerGame.skipLevel();
+}
+
+function resetGame() {
+  window.colorMixerGame.resetGame();
 }
 /* eslint-enable no-unused-vars */
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  window.colorMixer = new ColorMixer();
-  console.log('Color Mixer initialized successfully!');
+  window.colorMixerGame = new ColorMixerGame();
+  console.log('Color Mixer Game initialized successfully!');
 });
-
-// Add some performance monitoring in development
-if (process?.env?.NODE_ENV === 'development') {
-  window.addEventListener('load', () => {
-    console.log('Page load performance:', {
-      domContentLoaded: performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd,
-      loadComplete: performance.getEntriesByType('navigation')[0].loadEventEnd
-    });
-  });
-}

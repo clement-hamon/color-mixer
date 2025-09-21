@@ -29,27 +29,26 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: '20'  # Use latest LTS
-        cache: 'npm'
+        bun-version: latest
         
     - name: Install dependencies
-      run: npm ci
+      run: bun install
       
     - name: Run ESLint
-      run: npm run lint
+      run: bun run lint
       
     - name: Check Prettier formatting
-      run: npm run format:check
+      run: bun run format:check
       
     - name: Run tests
-      run: npm test
+      run: bun test
       continue-on-error: true
       
     - name: Build project
-      run: npm run build
+      run: bun run build
       
     # Upload build artifacts for deployment job
     - name: Upload Pages artifact

@@ -5,15 +5,15 @@
   "description": "A Bootstrap HTML/JavaScript color mixer application",
   "main": "index.js",
   "scripts": {
-    "dev": "live-server --port=3000 --open=/src",
-    "build": "npm run lint && npm run format:check && npm run copy-files",
+    "serve": "bun --watch run dev",
+    "build": "bun run lint && bun run format:check && bun run copy-files",
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix",
     "format": "prettier --write \"src/**/*.{html,css,js}\"",
     "format:check": "prettier --check \"src/**/*.{html,css,js}\"",
     "copy-files": "mkdir -p dist && cp -r src/* dist/",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install"
+    "start": "bun run serve"
   },
   "keywords": [
     "bootstrap",

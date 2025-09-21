@@ -54,6 +54,9 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
+# Bun cache directory
+.bun
+
 # Optional eslint cache
 .eslintcache
 

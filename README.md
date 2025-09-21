@@ -26,6 +26,7 @@ Visit the live application: [Color Mixer on GitHub Pages](https://clementhamon.g
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Framework**: Bootstrap 5.3.2
 - **Icons**: Bootstrap Icons
+- **Runtime**: Bun (JavaScript runtime & package manager)
 - **Development**: ESLint, Prettier, Husky
 - **CI/CD**: GitHub Actions
 - **Hosting**: GitHub Pages
@@ -34,8 +35,7 @@ Visit the live application: [Color Mixer on GitHub Pages](https://clementhamon.g
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- npm or yarn
+- [Bun](https://bun.sh) (latest version recommended)
 
 ### Local Development
 
@@ -47,7 +47,12 @@ Visit the live application: [Color Mixer on GitHub Pages](https://clementhamon.g
 
 2. **Install dependencies**
    ```bash
-   npm install
+   bun install
+   ```
+
+3. **Start development server**
+   ```bash
+   bun run dev
    ```
 
 3. **Start development server**
@@ -58,19 +63,19 @@ Visit the live application: [Color Mixer on GitHub Pages](https://clementhamon.g
 
 4. **Build for production**
    ```bash
-   npm run build
+   bun run build
    ```
 
 ## 🔧 Available Scripts
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Start development server with live reload |
-| `npm run build` | Build project for production |
-| `npm run lint` | Run ESLint to check code quality |
-| `npm run lint:fix` | Fix ESLint issues automatically |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check if code is properly formatted |
+| `bun run dev` | Start development server with live reload |
+| `bun run build` | Build project for production |
+| `bun run lint` | Run ESLint to check code quality |
+| `bun run lint:fix` | Fix ESLint issues automatically |
+| `bun run format` | Format code with Prettier |
+| `bun run format:check` | Check if code is properly formatted |
 
 ## 🏗️ Project Structure
 

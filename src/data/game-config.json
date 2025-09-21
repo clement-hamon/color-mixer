@@ -1,0 +1,113 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "name": "Primary Colors",
+      "description": "Mix primary colors to create secondary colors",
+      "targetColor": "#ff8000",
+      "availableColors": ["#ff0000", "#ffff00"],
+      "mixingSlots": 2,
+      "tolerance": 25,
+      "hints": ["Try mixing red and yellow to get orange"]
+    },
+    {
+      "id": 2,
+      "name": "Green Challenge",
+      "description": "Create the perfect green shade",
+      "targetColor": "#00ff00",
+      "availableColors": ["#0000ff", "#ffff00"],
+      "mixingSlots": 2,
+      "tolerance": 20,
+      "hints": ["Blue and yellow make green"]
+    },
+    {
+      "id": 3,
+      "name": "Purple Power",
+      "description": "Mix to create a vibrant purple",
+      "targetColor": "#8000ff",
+      "availableColors": ["#ff0000", "#0000ff"],
+      "mixingSlots": 2,
+      "tolerance": 25,
+      "hints": ["Red and blue create purple"]
+    },
+    {
+      "id": 4,
+      "name": "Coral Creation",
+      "description": "Create a beautiful coral color",
+      "targetColor": "#ff6b47",
+      "availableColors": ["#ff0000", "#ffff00", "#ffffff"],
+      "mixingSlots": 3,
+      "tolerance": 30,
+      "hints": ["Try mixing red, yellow, and white"]
+    },
+    {
+      "id": 5,
+      "name": "Ocean Blue",
+      "description": "Mix the perfect ocean blue",
+      "targetColor": "#0080c7",
+      "availableColors": ["#0000ff", "#00ffff", "#ffffff"],
+      "mixingSlots": 3,
+      "tolerance": 25,
+      "hints": ["Combine blue, cyan, and a touch of white"]
+    },
+    {
+      "id": 6,
+      "name": "Sunset Orange",
+      "description": "Create a warm sunset orange",
+      "targetColor": "#ff4500",
+      "availableColors": ["#ff0000", "#ffff00", "#ff8000"],
+      "mixingSlots": 2,
+      "tolerance": 20,
+      "hints": ["Mix red and orange for a deeper hue"]
+    },
+    {
+      "id": 7,
+      "name": "Forest Green",
+      "description": "Mix a deep forest green",
+      "targetColor": "#228b22",
+      "availableColors": ["#00ff00", "#000000", "#0000ff"],
+      "mixingSlots": 3,
+      "tolerance": 30,
+      "hints": ["Darken green with black and add a hint of blue"]
+    },
+    {
+      "id": 8,
+      "name": "Lavender Fields",
+      "description": "Create a soft lavender color",
+      "targetColor": "#e6e6fa",
+      "availableColors": ["#8000ff", "#ffffff", "#ffc0cb"],
+      "mixingSlots": 3,
+      "tolerance": 25,
+      "hints": ["Mix purple, white, and pink for a soft lavender"]
+    },
+    {
+      "id": 9,
+      "name": "Golden Hour",
+      "description": "Mix the perfect golden yellow",
+      "targetColor": "#ffd700",
+      "availableColors": ["#ffff00", "#ff8000", "#ffffff"],
+      "mixingSlots": 3,
+      "tolerance": 20,
+      "hints": ["Combine yellow, orange, and white"]
+    },
+    {
+      "id": 10,
+      "name": "Master Mixer",
+      "description": "Create a complex teal color",
+      "targetColor": "#008b8b",
+      "availableColors": ["#00ffff", "#008000", "#000080", "#ffffff"],
+      "mixingSlots": 4,
+      "tolerance": 15,
+      "hints": ["This is the final challenge - use all your mixing skills!"]
+    }
+  ],
+  "gameSettings": {
+    "maxAttempts": 10,
+    "timeLimit": 300,
+    "scoreMultiplier": {
+      "perfect": 1000,
+      "close": 500,
+      "far": 100
+    }
+  }
+}
