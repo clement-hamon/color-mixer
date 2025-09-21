@@ -9,7 +9,7 @@ class ColorMixerGame {
     this.currentLevel = 1;
     this.currentScore = 0;
     this.attemptsLeft = 10;
-    this.timeLeft = 300; // 5 minutes
+    this.timeLeft = 600; // 10 minutes
     this.gameTimer = null;
     this.mixingSlots = [];
     this.playerColor = '#000000';

@@ -18,6 +18,43 @@ const server = serve({
       }
     }
 
+    // Handle TypeScript files by compiling them on-the-fly
+    if (url.pathname.endsWith('.ts')) {
+      const tsFilePath = `src${url.pathname}`;
+      const tsFile = Bun.file(tsFilePath);
+
+      if (await tsFile.exists()) {
+        try {
+          // Compile TypeScript to JavaScript on-the-fly
+          const result = await Bun.build({
+            entrypoints: [tsFilePath],
+            target: 'browser',
+            format: 'esm',
+            minify: false,
+            sourcemap: 'inline'
+          });
+
+          if (result.success && result.outputs[0]) {
+            const jsContent = await result.outputs[0].text();
+            return new Response(jsContent, {
+              headers: {
+                'Content-Type': 'application/javascript',
+                'Cache-Control': 'no-cache'
+              }
+            });
+          }
+        } catch (error) {
+          console.error(`Error compiling ${tsFilePath}:`, error);
+          return new Response(`// Error compiling TypeScript: ${error.message}`, {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/javascript'
+            }
+          });
+        }
+      }
+    }
+
     // Handle static assets
     const filePath = `src${url.pathname}`;
     const file = Bun.file(filePath);
@@ -31,26 +68,6 @@ const server = serve({
           'Cache-Control': 'no-cache'
         }
       });
-    }
-
-    // Handle API routes for future expansion
-    if (url.pathname.startsWith('/api/')) {
-      return new Response(
-        JSON.stringify({
-          message: 'Color Mixer API',
-          version: '2.0.0',
-          endpoints: {
-            '/api/colors': 'Color palette management',
-            '/api/game': 'Game state management'
-          }
-        }),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        }
-      );
     }
 
     // 404 for everything else
@@ -68,6 +85,7 @@ function getContentType(pathname) {
     html: 'text/html',
     css: 'text/css',
     js: 'application/javascript',
+    ts: 'application/javascript', // Serve TypeScript as JavaScript
     json: 'application/json',
     png: 'image/png',
     jpg: 'image/jpeg',

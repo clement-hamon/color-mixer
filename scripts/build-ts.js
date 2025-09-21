@@ -28,7 +28,7 @@ await $`cp -r src/data dist/`;
 // Copy and modify HTML
 const htmlContent = await Bun.file('src/index.html').text();
 const modifiedHtml = htmlContent.replace(
-  '<script src="js/color-mixer.js"></script>',
+  '<script type="module" src="app.ts"></script>',
   '<script type="module" src="app.js"></script>'
 );
 await Bun.write('dist/index.html', modifiedHtml);

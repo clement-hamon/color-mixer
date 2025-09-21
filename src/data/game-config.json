@@ -103,7 +103,7 @@
   ],
   "gameSettings": {
     "maxAttempts": 10,
-    "timeLimit": 300,
+    "timeLimit": 600,
     "scoreMultiplier": {
       "perfect": 1000,
       "close": 500,
